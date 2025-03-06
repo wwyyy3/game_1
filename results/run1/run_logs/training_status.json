@@ -1,0 +1,56 @@
+{
+    "shootingAgent": {
+        "checkpoints": [
+            {
+                "steps": 2657,
+                "file_path": "results\\run1\\shootingAgent\\shootingAgent-2657.onnx",
+                "reward": -153.97946868071685,
+                "creation_time": 1740865064.1646886,
+                "auxillary_file_paths": [
+                    "results\\run1\\shootingAgent\\shootingAgent-2657.pt"
+                ]
+            },
+            {
+                "steps": 27657,
+                "file_path": "results\\run1\\shootingAgent\\shootingAgent-27657.onnx",
+                "reward": -100.00001525878906,
+                "creation_time": 1740866601.949719,
+                "auxillary_file_paths": [
+                    "results\\run1\\shootingAgent\\shootingAgent-27657.pt"
+                ]
+            },
+            {
+                "steps": 44657,
+                "file_path": "results\\run1\\shootingAgent\\shootingAgent-44657.onnx",
+                "reward": -100.00001525878906,
+                "creation_time": 1740867308.7555835,
+                "auxillary_file_paths": [
+                    "results\\run1\\shootingAgent\\shootingAgent-44657.pt"
+                ]
+            },
+            {
+                "steps": 53657,
+                "file_path": "results\\run1\\shootingAgent\\shootingAgent-53657.onnx",
+                "reward": -100.00001525878906,
+                "creation_time": 1740871127.0455441,
+                "auxillary_file_paths": [
+                    "results\\run1\\shootingAgent\\shootingAgent-53657.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 53657,
+            "file_path": "results\\run1\\shootingAgent.onnx",
+            "reward": -100.00001525878906,
+            "creation_time": 1740871127.0455441,
+            "auxillary_file_paths": [
+                "results\\run1\\shootingAgent\\shootingAgent-53657.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.1.0",
+        "torch_version": "2.2.2+cu121"
+    }
+}

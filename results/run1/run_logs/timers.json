@@ -1,0 +1,42 @@
+{
+    "name": "root",
+    "metadata": {
+        "timer_format_version": "0.1.0",
+        "start_time_seconds": "1740871493",
+        "python_version": "3.10.12 | packaged by Anaconda, Inc. | (main, Jul  5 2023, 19:01:18) [MSC v.1916 64 bit (AMD64)]",
+        "command_line_arguments": "C:\\Users\\xuxu3\\miniconda3\\envs\\mlagent\\Scripts\\mlagents-learn config/config.yaml --run-id=run1 --resume",
+        "mlagents_version": "1.1.0",
+        "mlagents_envs_version": "1.1.0",
+        "communication_protocol_version": "1.5.0",
+        "pytorch_version": "2.2.2+cu121",
+        "numpy_version": "1.23.5",
+        "end_time_seconds": "1740871571"
+    },
+    "total": 78.08332949999021,
+    "count": 1,
+    "self": 0.009127600002102554,
+    "children": {
+        "run_training.setup": {
+            "total": 0.08427900000242516,
+            "count": 1,
+            "self": 0.08427900000242516
+        },
+        "TrainerController.start_learning": {
+            "total": 77.98992289998569,
+            "count": 1,
+            "self": 0.00017329998081550002,
+            "children": {
+                "TrainerController._reset_env": {
+                    "total": 77.98967390001053,
+                    "count": 1,
+                    "self": 77.98967390001053
+                },
+                "TrainerController._save_models": {
+                    "total": 7.569999434053898e-05,
+                    "count": 1,
+                    "self": 7.569999434053898e-05
+                }
+            }
+        }
+    }
+}

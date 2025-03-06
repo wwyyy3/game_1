@@ -6,7 +6,7 @@ using UnityEngine.AI;
 public class GameManager : MonoBehaviour
 {
     [SerializeField] private GameObject monsterPrefab;
-    [SerializeField] private int monsterCount = 5;
+    [SerializeField] private int monsterCount = 10;
     [SerializeField] private float spawnRadius = 100f;
 
     // Stores the monster instances in the current scene

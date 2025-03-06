@@ -32,15 +32,24 @@
                 "auxillary_file_paths": [
                     "results\\run2\\shootingAgent\\shootingAgent-10000.pt"
                 ]
+            },
+            {
+                "steps": 41527,
+                "file_path": "results\\run2\\shootingAgent\\shootingAgent-41527.onnx",
+                "reward": -214.72359689076742,
+                "creation_time": 1741302851.28735,
+                "auxillary_file_paths": [
+                    "results\\run2\\shootingAgent\\shootingAgent-41527.pt"
+                ]
             }
         ],
         "final_checkpoint": {
-            "steps": 10000,
+            "steps": 41527,
             "file_path": "results\\run2\\shootingAgent.onnx",
-            "reward": null,
-            "creation_time": 1740957091.014122,
+            "reward": -214.72359689076742,
+            "creation_time": 1741302851.28735,
             "auxillary_file_paths": [
-                "results\\run2\\shootingAgent\\shootingAgent-10000.pt"
+                "results\\run2\\shootingAgent\\shootingAgent-41527.pt"
             ]
         }
     }

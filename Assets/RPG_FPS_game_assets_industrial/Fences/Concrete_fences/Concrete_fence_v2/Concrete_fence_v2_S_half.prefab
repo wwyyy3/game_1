@@ -12,9 +12,9 @@ GameObject:
   - component: {fileID: 33000012312112606}
   - component: {fileID: 23000010806834822}
   - component: {fileID: 65000010288613760}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Concrete_fence_v2_S_half
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4294967295
@@ -59,6 +59,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -117,9 +120,9 @@ GameObject:
   - component: {fileID: 33000013287804068}
   - component: {fileID: 23000011976131692}
   - component: {fileID: 65000011252498410}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Concrete_fence_v2_lattice_S_half
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4294967295
@@ -164,6 +167,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -219,9 +225,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4000010482363180}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Concrete_fence_v2_S_half
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4294967295

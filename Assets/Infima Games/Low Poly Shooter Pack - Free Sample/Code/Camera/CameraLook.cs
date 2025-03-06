@@ -12,7 +12,8 @@ namespace InfimaGames.LowPolyShooterPack
         #region FIELDS SERIALIZED
         
         [Header("Settings")]
-        
+        public Vector2 pendingLookInput;
+
         [Tooltip("Sensitivity when looking around.")]
         [SerializeField]
         public Vector2 sensitivity = new Vector2(1, 1);
@@ -69,10 +70,18 @@ namespace InfimaGames.LowPolyShooterPack
             //Cache the camera's initial rotation.
             rotationCamera = transform.localRotation;
         }
+
         private void LateUpdate()
         {
+            LookInput(pendingLookInput);
+            pendingLookInput = Vector2.zero;
+        }
+
+
+        public void LookInput(Vector2 lookInput )
+        {
             //Frame Input. The Input to add this frame!
-            Vector2 frameInput = playerCharacter.IsCursorLocked() ? playerCharacter.GetInputLook() : default;
+            Vector2 frameInput = lookInput;
             //Sensitivity.
             frameInput *= sensitivity;
 
@@ -80,11 +89,11 @@ namespace InfimaGames.LowPolyShooterPack
             Quaternion rotationYaw = Quaternion.Euler(0.0f, frameInput.x, 0.0f);
             //Pitch.
             Quaternion rotationPitch = Quaternion.Euler(-frameInput.y, 0.0f, 0.0f);
-            
+
             //Save rotation. We use this for smooth rotation.
             rotationCamera *= rotationPitch;
             rotationCharacter *= rotationYaw;
-            
+
             //Local Rotation.
             Quaternion localRotation = transform.localRotation;
 
@@ -106,7 +115,7 @@ namespace InfimaGames.LowPolyShooterPack
                 //Rotate character.
                 playerCharacterRigidbody.MoveRotation(playerCharacterRigidbody.rotation * rotationYaw);
             }
-            
+
             //Set.
             transform.localRotation = localRotation;
         }

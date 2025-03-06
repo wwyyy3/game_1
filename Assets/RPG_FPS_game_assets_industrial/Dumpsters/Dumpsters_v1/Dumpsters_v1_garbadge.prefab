@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 23000010126103198}
   - component: {fileID: 65000011506030884}
   - component: {fileID: 7996595252307787758}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Dumpsters_v1_garbadge
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4294967295
@@ -60,6 +60,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:

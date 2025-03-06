@@ -113,16 +113,13 @@ public class Projectile : MonoBehaviour
         }
 
 
-        if (collision.transform.tag == "Monster")
+        if (collision.transform.tag == "Enemy")
         {
             MonsterController monster = collision.transform.gameObject.GetComponent<MonsterController>();
             if (monster != null)
             {
                 Vector3 hitDirection = collision.transform.position - transform.position;
-                monster.TakeDamage(1, hitDirection); // 传递受击方向
-                                                     // 对怪物造成1点伤害
-
-                Debug.Log("monster hit");
+                monster.TakeDamage(1, hitDirection); 
             }
             //Destroy bullet object
             Destroy(gameObject);

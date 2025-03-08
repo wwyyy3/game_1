@@ -53,4 +53,9 @@ public class GameManager : MonoBehaviour
         NavMesh.SamplePosition(randomDirection, out navHit, radius, NavMesh.AllAreas);
         return navHit.position;
     }
+
+    public void SpawnMonsterAtPosition(Vector3 position)
+    {
+        Instantiate(monsterPrefab, position, Quaternion.identity);
+    }
 }

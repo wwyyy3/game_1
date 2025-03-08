@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 33000013021779330}
   - component: {fileID: 23000011087673466}
   - component: {fileID: 65000013880354276}
-  m_Layer: 16
+  m_Layer: 8
   m_Name: Pipes_set_v1_V_set_v2
   m_TagString: Building
   m_Icon: {fileID: 0}

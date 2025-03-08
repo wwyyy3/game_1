@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 23000010385824026}
   - component: {fileID: 64000014279155330}
   - component: {fileID: 355219372126412627}
-  m_Layer: 7
+  m_Layer: 8
   m_Name: Oil_tank_v1
   m_TagString: Building
   m_Icon: {fileID: 0}

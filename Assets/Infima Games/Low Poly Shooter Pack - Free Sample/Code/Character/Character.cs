@@ -16,9 +16,9 @@ namespace InfimaGames.LowPolyShooterPack
     public sealed class Character : CharacterBehaviour
     {
         #region FIELDS SERIALIZED
-        [Header("Health")]
-        public int maxHealth = 10;
-        public int currentHealth;
+        //[Header("Health")]
+        //public int maxHealth = 10;
+        //public int currentHealth;
 
         [Header("Inventory")]
 
@@ -193,7 +193,7 @@ namespace InfimaGames.LowPolyShooterPack
         }
         protected override void Start()
         {
-            currentHealth = maxHealth; 
+            //currentHealth = maxHealth; 
             //Cache a reference to the holster layer's index.
             layerHolster = characterAnimator.GetLayerIndex("Layer Holster");
             //Cache a reference to the action layer's index.
@@ -608,205 +608,205 @@ namespace InfimaGames.LowPolyShooterPack
         /// <summary>
         /// Reload.
         /// </summary>
-        public void OnTryPlayReload(InputAction.CallbackContext context)
-        {
-            //Block while the cursor is unlocked.
-            if (!cursorLocked)
-                return;
+        //public void OnTryPlayReload(InputAction.CallbackContext context)
+        //{
+        //    //Block while the cursor is unlocked.
+        //    if (!cursorLocked)
+        //        return;
 
-            //Block.
-            if (!CanPlayAnimationReload())
-                return;
+        //    //Block.
+        //    if (!CanPlayAnimationReload())
+        //        return;
 
-            //Switch.
-            switch (context)
-            {
-                //Performed.
-                case { phase: InputActionPhase.Performed }:
-                    //Play Animation.
-                    PlayReloadAnimation();
-                    break;
-            }
-        }
+        //    //Switch.
+        //    switch (context)
+        //    {
+        //        //Performed.
+        //        case { phase: InputActionPhase.Performed }:
+        //            //Play Animation.
+        //            PlayReloadAnimation();
+        //            break;
+        //    }
+        //}
 
-        /// <summary>
-        /// Inspect.
-        /// </summary>
-        public void OnTryInspect(InputAction.CallbackContext context)
-        {
-            //Block while the cursor is unlocked.
-            if (!cursorLocked)
-                return;
+        ///// <summary>
+        ///// Inspect.
+        ///// </summary>
+        //public void OnTryInspect(InputAction.CallbackContext context)
+        //{
+        //    //Block while the cursor is unlocked.
+        //    if (!cursorLocked)
+        //        return;
 
-            //Block.
-            if (!CanPlayAnimationInspect())
-                return;
+        //    //Block.
+        //    if (!CanPlayAnimationInspect())
+        //        return;
 
-            //Switch.
-            switch (context)
-            {
-                //Performed.
-                case { phase: InputActionPhase.Performed }:
-                    //Play Animation.
-                    Inspect();
-                    break;
-            }
-        }
-        /// <summary>
-        /// Aiming.
-        /// </summary>
-        public void OnTryAiming(InputAction.CallbackContext context)
-        {
-            //Block while the cursor is unlocked.
-            if (!cursorLocked)
-                return;
+        //    //Switch.
+        //    switch (context)
+        //    {
+        //        //Performed.
+        //        case { phase: InputActionPhase.Performed }:
+        //            //Play Animation.
+        //            Inspect();
+        //            break;
+        //    }
+        //}
+        ///// <summary>
+        ///// Aiming.
+        ///// </summary>
+        //public void OnTryAiming(InputAction.CallbackContext context)
+        //{
+        //    //Block while the cursor is unlocked.
+        //    if (!cursorLocked)
+        //        return;
 
-            //Switch.
-            switch (context.phase)
-            {
-                case InputActionPhase.Started:
-                    //Started.
-                    holdingButtonAim = true;
-                    break;
-                case InputActionPhase.Canceled:
-                    //Canceled.
-                    holdingButtonAim = false;
-                    break;
-            }
-        }
+        //    //Switch.
+        //    switch (context.phase)
+        //    {
+        //        case InputActionPhase.Started:
+        //            //Started.
+        //            holdingButtonAim = true;
+        //            break;
+        //        case InputActionPhase.Canceled:
+        //            //Canceled.
+        //            holdingButtonAim = false;
+        //            break;
+        //    }
+        //}
 
-        /// <summary>
-        /// Holster.
-        /// </summary>
-        public void OnTryHolster(InputAction.CallbackContext context)
-        {
-            //Block while the cursor is unlocked.
-            if (!cursorLocked)
-                return;
+        ///// <summary>
+        ///// Holster.
+        ///// </summary>
+        //public void OnTryHolster(InputAction.CallbackContext context)
+        //{
+        //    //Block while the cursor is unlocked.
+        //    if (!cursorLocked)
+        //        return;
 
-            //Switch.
-            switch (context.phase)
-            {
-                //Performed.
-                case InputActionPhase.Performed:
-                    //Check.
-                    if (CanPlayAnimationHolster())
-                    {
-                        //Set.
-                        SetHolstered(!holstered);
-                        //Holstering.
-                        holstering = true;
-                    }
-                    break;
-            }
-        }
-        /// <summary>
-        /// Run. 
-        /// </summary>
-        public void OnTryRun(InputAction.CallbackContext context)
-        {
-            //Block while the cursor is unlocked.
-            if (!cursorLocked)
-                return;
+        //    //Switch.
+        //    switch (context.phase)
+        //    {
+        //        //Performed.
+        //        case InputActionPhase.Performed:
+        //            //Check.
+        //            if (CanPlayAnimationHolster())
+        //            {
+        //                //Set.
+        //                SetHolstered(!holstered);
+        //                //Holstering.
+        //                holstering = true;
+        //            }
+        //            break;
+        //    }
+        //}
+        ///// <summary>
+        ///// Run. 
+        ///// </summary>
+        //public void OnTryRun(InputAction.CallbackContext context)
+        //{
+        //    //Block while the cursor is unlocked.
+        //    if (!cursorLocked)
+        //        return;
 
-            //Switch.
-            switch (context.phase)
-            {
-                //Started.
-                case InputActionPhase.Started:
-                    //Start.
-                    holdingButtonRun = true;
-                    break;
-                //Canceled.
-                case InputActionPhase.Canceled:
-                    //Stop.
-                    holdingButtonRun = false;
-                    break;
-            }
-        }
-        /// <summary>
-        /// Next Inventory Weapon.
-        /// </summary>
-        public void OnTryInventoryNext(InputAction.CallbackContext context)
-        {
-            //Block while the cursor is unlocked.
-            if (!cursorLocked)
-                return;
+        //    //Switch.
+        //    switch (context.phase)
+        //    {
+        //        //Started.
+        //        case InputActionPhase.Started:
+        //            //Start.
+        //            holdingButtonRun = true;
+        //            break;
+        //        //Canceled.
+        //        case InputActionPhase.Canceled:
+        //            //Stop.
+        //            holdingButtonRun = false;
+        //            break;
+        //    }
+        //}
+        ///// <summary>
+        ///// Next Inventory Weapon.
+        ///// </summary>
+        //public void OnTryInventoryNext(InputAction.CallbackContext context)
+        //{
+        //    //Block while the cursor is unlocked.
+        //    if (!cursorLocked)
+        //        return;
 
-            //Null Check.
-            if (inventory == null)
-                return;
+        //    //Null Check.
+        //    if (inventory == null)
+        //        return;
 
-            //Switch.
-            switch (context)
-            {
-                //Performed.
-                case { phase: InputActionPhase.Performed }:
-                    //Get the index increment direction for our inventory using the scroll wheel direction. If we're not
-                    //actually using one, then just increment by one.
-                    float scrollValue = context.valueType.IsEquivalentTo(typeof(Vector2)) ? Mathf.Sign(context.ReadValue<Vector2>().y) : 1.0f;
+        //    //Switch.
+        //    switch (context)
+        //    {
+        //        //Performed.
+        //        case { phase: InputActionPhase.Performed }:
+        //            //Get the index increment direction for our inventory using the scroll wheel direction. If we're not
+        //            //actually using one, then just increment by one.
+        //            float scrollValue = context.valueType.IsEquivalentTo(typeof(Vector2)) ? Mathf.Sign(context.ReadValue<Vector2>().y) : 1.0f;
 
-                    //Get the next index to switch to.
-                    int indexNext = scrollValue > 0 ? inventory.GetNextIndex() : inventory.GetLastIndex();
-                    //Get the current weapon's index.
-                    int indexCurrent = inventory.GetEquippedIndex();
+        //            //Get the next index to switch to.
+        //            int indexNext = scrollValue > 0 ? inventory.GetNextIndex() : inventory.GetLastIndex();
+        //            //Get the current weapon's index.
+        //            int indexCurrent = inventory.GetEquippedIndex();
 
-                    //Make sure we're allowed to change, and also that we're not using the same index, otherwise weird things happen!
-                    if (CanChangeWeapon() && (indexCurrent != indexNext))
-                        StartCoroutine(nameof(Equip), indexNext);
-                    break;
-            }
-        }
+        //            //Make sure we're allowed to change, and also that we're not using the same index, otherwise weird things happen!
+        //            if (CanChangeWeapon() && (indexCurrent != indexNext))
+        //                StartCoroutine(nameof(Equip), indexNext);
+        //            break;
+        //    }
+        //}
 
-        public void OnLockCursor(InputAction.CallbackContext context)
-        {
-            //Switch.
-            switch (context)
-            {
-                //Performed.
-                case { phase: InputActionPhase.Performed }:
-                    //Toggle the cursor locked value.
-                    cursorLocked = !cursorLocked;
-                    //Update the cursor's state.
-                    UpdateCursorState();
-                    break;
-            }
-        }
+        //public void OnLockCursor(InputAction.CallbackContext context)
+        //{
+        //    //Switch.
+        //    switch (context)
+        //    {
+        //        //Performed.
+        //        case { phase: InputActionPhase.Performed }:
+        //            //Toggle the cursor locked value.
+        //            cursorLocked = !cursorLocked;
+        //            //Update the cursor's state.
+        //            UpdateCursorState();
+        //            break;
+        //    }
+        //}
 
-        /// <summary>
-        /// Movement.
-        /// </summary>
-        public void OnMove(InputAction.CallbackContext context)
-        {
-            //Read.
-            axisMovement = cursorLocked ? context.ReadValue<Vector2>() : default;
-        }
+        ///// <summary>
+        ///// Movement.
+        ///// </summary>
+        //public void OnMove(InputAction.CallbackContext context)
+        //{
+        //    //Read.
+        //    axisMovement = cursorLocked ? context.ReadValue<Vector2>() : default;
+        //}
 
-        /// <summary>
-        /// Look.
-        /// </summary>
-        public void OnLook(InputAction.CallbackContext context)
-        {
-            //Read.
-            axisLook = cursorLocked ? context.ReadValue<Vector2>() : default;
-        }
+        ///// <summary>
+        ///// Look.
+        ///// </summary>
+        //public void OnLook(InputAction.CallbackContext context)
+        //{
+        //    //Read.
+        //    axisLook = cursorLocked ? context.ReadValue<Vector2>() : default;
+        //}
 
-        /// <summary>
-        /// Called in order to update the tutorial text value.
-        /// </summary>
-        public void OnUpdateTutorial(InputAction.CallbackContext context)
-        {
-            //Switch.
-            tutorialTextVisible = context switch
-            {
-                //Started. Show the tutorial.
-                { phase: InputActionPhase.Started } => true,
-                //Canceled. Hide the tutorial.
-                { phase: InputActionPhase.Canceled } => false,
-                //Default.
-                _ => tutorialTextVisible
-            };
-        }
+        ///// <summary>
+        ///// Called in order to update the tutorial text value.
+        ///// </summary>
+        //public void OnUpdateTutorial(InputAction.CallbackContext context)
+        //{
+        //    //Switch.
+        //    tutorialTextVisible = context switch
+        //    {
+        //        //Started. Show the tutorial.
+        //        { phase: InputActionPhase.Started } => true,
+        //        //Canceled. Hide the tutorial.
+        //        { phase: InputActionPhase.Canceled } => false,
+        //        //Default.
+        //        _ => tutorialTextVisible
+        //    };
+        //}
 
         #endregion
 

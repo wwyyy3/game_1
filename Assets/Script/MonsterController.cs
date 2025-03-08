@@ -37,12 +37,13 @@ public class MonsterController : MonoBehaviour
     [Tooltip("Forward distance to check for steps")]
     public float stepCheckDistance = 0.5f;
     #endregion
-    private ShooterAgent ShooterAgent;
 
+    #region Internal State
     private bool isDead = false;
     private float lastWanderTime;
-    ShooterAgent playerAgent;
-    // Start is called before the first frame update
+    private ShooterAgent playerAgent;
+    #endregion
+
     void Start()
     {
         monsterAgent = GetComponent<NavMeshAgent>();
@@ -109,13 +110,6 @@ public class MonsterController : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Generates a random navigation point within the specified radius.
-    /// </summary>
-    /// <param name="origin">The center position</param>
-    /// <param name="dist">Search radius</param>
-    /// <param name="layermask">Navigation layer mask</param>
-    /// <returns>A valid position on the navigation mesh</returns>
     private Vector3 RandomNavSphere(Vector3 origin, float dist, int layermask)
     {
         // Generate a random direction
@@ -148,7 +142,7 @@ public class MonsterController : MonoBehaviour
         if (isDead) return;
 
         hitCount += damage;
-        playerAgent.AddReward(+10f);
+        playerAgent.AddReward(20f);
         Vector3 knockback = hitDirection.normalized * 2f;
         transform.position += new Vector3(knockback.x, 0, knockback.z);
         animator.SetTrigger("getHit");

@@ -1,190 +1,301 @@
 using InfimaGames.LowPolyShooterPack;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Sensors;
 using UnityEngine;
 
+public enum AgentActionType { GoalReached, MonsterKilled }
+
 public class ShooterAgent : Agent
 {
-    [SerializeField] private GameObject monsterPrefab;
+    #region Configuration
+    [Header("Core Settings")]
     [SerializeField] private GameObject goal;
     [SerializeField] private GameManager gameManager;
     [SerializeField] private CameraLook cameraLook;
     [SerializeField] private Transform shootingPoint;
+    [SerializeField] private int wallLayer;
+    [SerializeField] private float spawnRadius = 100f;
+    [SerializeField] private float minMonsterDistance = 5f;
 
+    [Header("Training Phase")]
+    public bool pathfindingOnlyPhase = true;
+
+    [Header("Cooperative Settings")]
+    public ShooterAgent teammate;
+    public event Action<AgentActionType> OnTeammateAction;
+    #endregion
+
+    #region Internal State
     private Character character;
-    private List<MonsterController> monsters = new List<MonsterController>();
     private Rigidbody rb;
-
     private int maxHealth = 10;
     private int currentHealth;
-    //private float speedRunning = 15f;
     private float speedWalking = 5f;
+    private List<MonsterController> monsters = new List<MonsterController>();
+    private static readonly object spawnLock = new object();
+    #endregion
 
-    //public Transform shootingPoint;
-    public Vector3 Velocity
-    {
-        get => rb.linearVelocity;
-        set => rb.linearVelocity = value;
-    }
-
+    #region Initialization
     public override void Initialize()
     {
         character = GetComponent<Character>();
         rb = GetComponent<Rigidbody>();
-        transform.position = new Vector3(83.8f, 1.8f, 13.8f);
         currentHealth = maxHealth;
-    }
+        Physics.IgnoreLayerCollision(gameObject.layer, wallLayer, false);
 
+        if (gameManager == null)
+            gameManager = GetComponentInParent<GameManager>();
+    }
+    #endregion
+
+    #region Episode Handling
     public override void OnEpisodeBegin()
     {
+        CleanLegacyObjects();
         ResetAgent();
-        SpawnObjects();
+        StartCoroutine(DelayedSpawn());
+        Debug.Log("episodeBegin");
     }
 
-    private void shoot()
+    private IEnumerator DelayedSpawn()
     {
-        var layerMask = 1 << LayerMask.NameToLayer("Enemy");
-        var direction = transform.forward;
+        yield return new WaitForEndOfFrame();  
+        SpawnObjects();                       
+    }
 
-        Debug.DrawRay(transform.position, direction, Color.blue, 1f);
-
-        if (Physics.Raycast(shootingPoint.position, direction, out var hit, 200f, layerMask))
+    private void CleanLegacyObjects()
+    {
+        
+        foreach (var m in monsters.ToArray())
         {
-            character.AgentFire();
+            if (m != null) Destroy(m.gameObject);
+        }
+        monsters.Clear();
+
+        
+        var agents = GameObject.FindGameObjectsWithTag("Player");
+        foreach (var a in agents)
+            if (a != gameObject && a != teammate?.gameObject) Destroy(a);
+    }
+    #endregion
+
+    #region Observation System
+    public override void CollectObservations(VectorSensor sensor)
+    {
+        // Self state
+        sensor.AddObservation(transform.localPosition);
+        sensor.AddObservation(goal.transform.localPosition);
+        sensor.AddObservation(currentHealth / (float)maxHealth);
+
+        // Teammate observation
+        if (teammate != null)
+        {
+            sensor.AddObservation(teammate.transform.position);
+            sensor.AddObservation(teammate.currentHealth / (float)maxHealth);
         }
         else
         {
-            AddReward(-0.033f);
-            Debug.Log("did not hit -0.033");
+            sensor.AddObservation(Vector3.zero);
+            sensor.AddObservation(0f);
         }
+
+        // Monster positions
+        foreach (var monster in monsters)
+            sensor.AddObservation(monster != null ? monster.transform.position : Vector3.zero);
     }
+    #endregion
 
-    public override void CollectObservations(VectorSensor sensor)
-    {
-        sensor.AddObservation(transform.position);
-        sensor.AddObservation(goal.transform.position);
-        //monster -
-
-    }
-
-    private void FixedUpdate()
-    {
-        AddReward(-0.1f / MaxStep);
-    }
-
+    #region Action System
     public override void OnActionReceived(ActionBuffers actions)
     {
-        int fireAction = actions.DiscreteActions[0];
-        if (fireAction == 1)
-        {
-            shoot();
-        }
+        HandleMovement(actions);
+        HandleRotation(actions);
+        HandleShooting(actions);
+        ApplyBehaviorPenalty();
+        CheckBoundary();
+    }
 
+    private void HandleMovement(ActionBuffers actions)
+    {
         float moveX = Mathf.Clamp(actions.ContinuousActions[0], -1f, 1f);
         float moveZ = Mathf.Clamp(actions.ContinuousActions[1], -1f, 1f);
-        var movement = transform.forward * moveZ + transform.right * moveX;
-        movement *= speedWalking;
-        Velocity = new Vector3(movement.x, rb.linearVelocity.y, movement.z);
 
-        Vector2 lookInput = new Vector2(actions.ContinuousActions[2], actions.ContinuousActions[3]);
-        cameraLook.pendingLookInput = lookInput;
-
-        // Action -0.01 -----
-        // Hit the enemy 10 ---
-
-        // Receive hit -8 -----
-
-        // goal 60-----
-
-        // Die -100-----
-
-        // bullet miss -0,3 ---
-
-        // wall -1 ------ 
-
-        // Building -1 ------
-
+        Vector3 moveDirection = (transform.forward * moveZ + transform.right * moveX).normalized;
+        if (!CheckWallCollision(moveDirection))
+        {
+            Vector3 targetVelocity = moveDirection * speedWalking;
+            rb.linearVelocity = new Vector3(targetVelocity.x, rb.linearVelocity.y, targetVelocity.z);
+        }
+        else
+        {
+            AddReward(-0.1f);
+            rb.linearVelocity = Vector3.zero; 
+        }
     }
 
-    private void ResetAgent()
+    private void HandleRotation(ActionBuffers actions)
     {
-        currentHealth = maxHealth;
-        transform.position = new Vector3(83.8f, 1.8f, 13.8f);
-        transform.position = new Vector3(83.8f, 1.8f, 13.8f);
+        Vector2 lookInput = new Vector2(
+            actions.ContinuousActions[2],
+            actions.ContinuousActions[3]
+        );
+        cameraLook.pendingLookInput = lookInput;
     }
 
+    private void HandleShooting(ActionBuffers actions)
+    {
+        Debug.DrawRay(shootingPoint.position, transform.forward * 200f, Color.green, 2f);
+        if (!pathfindingOnlyPhase && actions.DiscreteActions[0] == 1)
+        {
+            var layerMask = 1 << LayerMask.NameToLayer("Enemy");
+            if (Physics.Raycast(shootingPoint.position, transform.forward, out RaycastHit hit, 200f, layerMask))
+            {         
+                var monster = hit.collider.GetComponent<MonsterController>();
+                if (monster != null)
+                {
+                    character.AgentFire();
+                    AddReward(1f);
+                }
+            }
+            else
+            {
+                AddReward(-0.1f);
+            }
+        }
+
+    }
+
+    private void ApplyBehaviorPenalty()
+    {
+
+        AddReward(-0.001f);
+    }
+    #endregion
+
+    #region Environment Interaction
+
+
+    private bool CheckWallCollision(Vector3 direction)
+    {
+        return Physics.Raycast(transform.position, direction, 1f, wallLayer);
+    }
+
+    private void CheckBoundary()
+    {
+        if (Physics.CheckSphere(transform.position, 1f, wallLayer))
+        {
+            AddReward(-5f);
+            Debug.Log("teach the wall");
+            EndEpisode();
+        }
+    }
+    #endregion
+
+    #region Cooperative System
+    public void NotifyTeamAction(AgentActionType actionType)
+    {
+        OnTeammateAction?.Invoke(actionType);
+        float reward = actionType switch
+        {
+            AgentActionType.GoalReached => 30f,
+            AgentActionType.MonsterKilled => 5f,
+            _ => 0f
+        };
+        AddReward(reward);
+    }
+    #endregion
+
+    #region Spawn System
     private void SpawnObjects()
     {
-        gameManager.SpawnMonsters(Vector3.zero);
-        monsters.AddRange(Object.FindObjectsByType<MonsterController>(FindObjectsSortMode.None));
+        lock (spawnLock)
+        {
+            //SpawnMonsters();
+            gameManager.SpawnMonsters(Vector3.zero);
+            monsters.AddRange(UnityEngine.Object.FindObjectsByType<MonsterController>(FindObjectsSortMode.None));
+            SpawnTeammate();
+        }
     }
 
-    //public override void Heuristic(in ActionBuffers actionsOut)
-    //{
-    //    var _actionsOut = actionsOut.ContinuousActions;
-    //    _actionsOut[0] = Input.GetAxisRaw("Horizontal");
-    //    _actionsOut[1] = Input.GetAxisRaw("Vertical");
+    private void SpawnTeammate()
+    {
+        if (teammate != null)
+        {
+            bool spawned = false;
+            Vector3[] directions = { transform.right, transform.forward, -transform.right, -transform.forward };
+            foreach (var dir in directions)
+            {
+                Vector3 spawnPos = transform.position + dir * 2f;
+                if (!Physics.CheckSphere(spawnPos, 0.5f, wallLayer))
+                {
+                    teammate.transform.position = spawnPos;
+                    teammate.ResetAgent();
+                    spawned = true;
+                    break;
+                }
+            }
+            if (!spawned)
+            {
+                EndEpisode();  
+            }
+        }
+    }
+    #endregion
 
-    //    _actionsOut[2] = Input.GetAxis("Mouse X");
-    //    _actionsOut[3] = Input.GetAxis("Mouse Y");
-
-    //    var discrete = actionsOut.DiscreteActions;
-    //    discrete[0] = Input.GetKey(KeyCode.Space) ? 1 : 0;
-    //}
-
+    #region Health System
     public void TakeDamage(int damage)
     {
         currentHealth -= damage;
         AddReward(-8f);
-        Debug.Log("takeDamage -8");
-        Debug.Log("Player took damage: " + damage + ", Current Health: " + currentHealth);
 
         if (currentHealth <= 0)
         {
-            Die();
+            AddReward(-100f);
+            EndEpisode();
         }
     }
+    #endregion
 
-    private void Die()
+    #region Reset System
+    private void ResetAgent()
     {
-        AddReward(-100f);
-        Debug.Log("die -100");
-
-        EndEpisode();
+        currentHealth = maxHealth;
+        rb.linearVelocity = Vector3.zero;
+        transform.localPosition = new Vector3(1.4f, -9.63769f, -0.6f);
+        Physics.SyncTransforms();
     }
+    #endregion
 
+    #region Goal System
     private void GoalReached()
     {
         AddReward(100f);
-        //cumulativeReward = GetCumulativeReward();
-
+        NotifyTeamAction(AgentActionType.GoalReached);
         EndEpisode();
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Goal"))
-        {
             GoalReached();
-            Debug.Log("goal +100");
-        }
     }
+    #endregion
 
-    private void OnCollisionEnter(Collision other)
-    {
-        Debug.Log("agent collision" + other.gameObject.name);
-        if (other.collider.CompareTag("Wall"))
-        {
-            AddReward(-1f);
-            Debug.Log("Hit wall -1");
-        }
+    #region Debug
+    //public override void Heuristic(in ActionBuffers actionsOut)
+    //{
+    //    var continuous = actionsOut.ContinuousActions;
+    //    continuous[0] = Input.GetAxisRaw("Horizontal");
+    //    continuous[1] = Input.GetAxisRaw("Vertical");
+    //    continuous[2] = Input.GetAxis("Mouse X");
+    //    continuous[3] = Input.GetAxis("Mouse Y");
 
-        if (other.collider.CompareTag("Building"))
-        {
-            AddReward(-1f);
-            Debug.Log("Hit Building -1");
-        }
-    }
+    //    var discrete = actionsOut.DiscreteActions;
+    //    discrete[0] = Input.GetKey(KeyCode.Space) ? 1 : 0;
+    //}
+    #endregion
 }

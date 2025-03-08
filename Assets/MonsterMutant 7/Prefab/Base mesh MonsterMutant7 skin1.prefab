@@ -1897,7 +1897,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHits: 1
   hitCount: 0
-  monsterAgent: {fileID: 0}
+  monsterAgent: {fileID: 795088126089228620}
   wanderRadius: 10
   wanderInterval: 5
   chaseRadius: 15

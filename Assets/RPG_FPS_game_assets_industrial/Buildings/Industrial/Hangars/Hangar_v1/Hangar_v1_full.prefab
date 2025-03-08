@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 23000012360611450}
   - component: {fileID: 64000011546560374}
   - component: {fileID: 3698024839748439198}
-  m_Layer: 7
+  m_Layer: 8
   m_Name: Hangar_v1_full
   m_TagString: Building
   m_Icon: {fileID: 0}

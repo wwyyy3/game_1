@@ -1,0 +1,29 @@
+{
+    "shootingAgent": {
+        "checkpoints": [
+            {
+                "steps": 89617,
+                "file_path": "results\\20250308\\shootingAgent\\shootingAgent-89617.onnx",
+                "reward": -302.79123401641846,
+                "creation_time": 1741476071.4786406,
+                "auxillary_file_paths": [
+                    "results\\20250308\\shootingAgent\\shootingAgent-89617.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 89617,
+            "file_path": "results\\20250308\\shootingAgent.onnx",
+            "reward": -302.79123401641846,
+            "creation_time": 1741476071.4786406,
+            "auxillary_file_paths": [
+                "results\\20250308\\shootingAgent\\shootingAgent-89617.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.1.0",
+        "torch_version": "2.2.2+cu121"
+    }
+}

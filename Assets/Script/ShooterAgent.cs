@@ -103,8 +103,16 @@ public class ShooterAgent : Agent
         Debug.DrawRay(shootingPoint.position, transform.forward * 30f, Color.green, 2f);
         if (!pathfindingOnlyPhase && actions.DiscreteActions[0] == 1)
         {
-            var layerMask = 1 << LayerMask.NameToLayer("Enemy");
-            if (Physics.Raycast(shootingPoint.position, transform.forward, out RaycastHit hit, 20f, layerMask))
+
+            var wallMask = 1 << LayerMask.NameToLayer("Wall");
+            if (Physics.Raycast(shootingPoint.position, transform.forward, out RaycastHit detection, 20f, wallMask))
+            {
+                AddReward(-0.005f);
+                return;
+            }
+
+            var enemyMask = 1 << LayerMask.NameToLayer("Enemy");
+            if (Physics.Raycast(shootingPoint.position, transform.forward, out RaycastHit hit, 20f, enemyMask))
             {
                 var monster = hit.collider.GetComponent<MonsterController>();
                 if (monster != null)
@@ -117,11 +125,11 @@ public class ShooterAgent : Agent
                         AddReward(10f);
                         Debug.Log("I killed the monster");
                     }
-                }
+                }                   
             }
             else
             {
-                AddReward(-0.1f);
+                AddReward(-0.005f);
             }
         }
     }
@@ -131,7 +139,7 @@ public class ShooterAgent : Agent
         float currentDistanceToGoal = Vector3.Distance(transform.localPosition, goal.transform.localPosition);
         float distanceDiff = previousDistanceToGoal - currentDistanceToGoal;
 
-        AddReward(distanceDiff * 1f);
+        AddReward(distanceDiff * 0.5f);
         previousDistanceToGoal = currentDistanceToGoal;
 
         AddReward(-0.001f);
@@ -145,10 +153,16 @@ public class ShooterAgent : Agent
         var wallLayer = 1 << LayerMask.NameToLayer("Wall"); 
         if (Physics.CheckSphere(transform.localPosition, 0.1f, wallLayer))
         {
-            AddReward(-5f);
+            AddReward(-0.3f);
             Debug.Log("Collided with wall");
+            //EndEpisode();
+        }
+        if (transform.localPosition.y < -13.5f)
+        {
+            Debug.Log("fall down");
             EndEpisode();
         }
+
     }
     #endregion
 
@@ -158,8 +172,7 @@ public class ShooterAgent : Agent
         lock (spawnLock)
         {
             gameManager.SpawnMonsters(transform.parent.localPosition);
-            monsters.AddRange(UnityEngine.Object.FindObjectsByType<MonsterController>(FindObjectsSortMode.None));
-            
+            monsters.AddRange(UnityEngine.Object.FindObjectsByType<MonsterController>(FindObjectsSortMode.None));           
         }
     }
     #endregion

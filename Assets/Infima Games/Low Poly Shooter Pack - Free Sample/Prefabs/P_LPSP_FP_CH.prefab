@@ -1361,7 +1361,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 26276
+    VectorObservationSize: 7
     NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 4
@@ -1394,11 +1394,12 @@ MonoBehaviour:
   agentParameters:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
-  MaxStep: 6000
+  MaxStep: 8000
   goal: {fileID: 0}
   gameManager: {fileID: 0}
   cameraLook: {fileID: 7954147704929373820}
   shootingPoint: {fileID: 2748913124992463393}
+  mapParent: {fileID: 0}
   wallLayer: 8
   spawnRadius: 20
   minMonsterDistance: 5

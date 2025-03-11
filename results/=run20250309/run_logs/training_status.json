@@ -1,0 +1,56 @@
+{
+    "shootingAgent": {
+        "checkpoints": [
+            {
+                "steps": 229671,
+                "file_path": "results\\=run20250309\\shootingAgent\\shootingAgent-229671.onnx",
+                "reward": -8.566666666666666,
+                "creation_time": 1741554971.336214,
+                "auxillary_file_paths": [
+                    "results\\=run20250309\\shootingAgent\\shootingAgent-229671.pt"
+                ]
+            },
+            {
+                "steps": 292307,
+                "file_path": "results\\=run20250309\\shootingAgent\\shootingAgent-292307.onnx",
+                "reward": null,
+                "creation_time": 1741556547.5363886,
+                "auxillary_file_paths": [
+                    "results\\=run20250309\\shootingAgent\\shootingAgent-292307.pt"
+                ]
+            },
+            {
+                "steps": 317907,
+                "file_path": "results\\=run20250309\\shootingAgent\\shootingAgent-317907.onnx",
+                "reward": -8.0,
+                "creation_time": 1741557266.9205234,
+                "auxillary_file_paths": [
+                    "results\\=run20250309\\shootingAgent\\shootingAgent-317907.pt"
+                ]
+            },
+            {
+                "steps": 366705,
+                "file_path": "results\\=run20250309\\shootingAgent\\shootingAgent-366705.onnx",
+                "reward": -8.0,
+                "creation_time": 1741573033.2853758,
+                "auxillary_file_paths": [
+                    "results\\=run20250309\\shootingAgent\\shootingAgent-366705.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 366705,
+            "file_path": "results\\=run20250309\\shootingAgent.onnx",
+            "reward": -8.0,
+            "creation_time": 1741573033.2853758,
+            "auxillary_file_paths": [
+                "results\\=run20250309\\shootingAgent\\shootingAgent-366705.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.1.0",
+        "torch_version": "2.2.2+cu121"
+    }
+}

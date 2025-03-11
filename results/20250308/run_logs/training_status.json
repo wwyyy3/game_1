@@ -9,15 +9,42 @@
                 "auxillary_file_paths": [
                     "results\\20250308\\shootingAgent\\shootingAgent-89617.pt"
                 ]
+            },
+            {
+                "steps": 102988,
+                "file_path": "results\\20250308\\shootingAgent\\shootingAgent-102988.onnx",
+                "reward": -109.67033815383911,
+                "creation_time": 1741478339.8581789,
+                "auxillary_file_paths": [
+                    "results\\20250308\\shootingAgent\\shootingAgent-102988.pt"
+                ]
+            },
+            {
+                "steps": 113315,
+                "file_path": "results\\20250308\\shootingAgent\\shootingAgent-113315.onnx",
+                "reward": null,
+                "creation_time": 1741478486.2714887,
+                "auxillary_file_paths": [
+                    "results\\20250308\\shootingAgent\\shootingAgent-113315.pt"
+                ]
+            },
+            {
+                "steps": 123915,
+                "file_path": "results\\20250308\\shootingAgent\\shootingAgent-123915.onnx",
+                "reward": null,
+                "creation_time": 1741478849.9729283,
+                "auxillary_file_paths": [
+                    "results\\20250308\\shootingAgent\\shootingAgent-123915.pt"
+                ]
             }
         ],
         "final_checkpoint": {
-            "steps": 89617,
+            "steps": 123915,
             "file_path": "results\\20250308\\shootingAgent.onnx",
-            "reward": -302.79123401641846,
-            "creation_time": 1741476071.4786406,
+            "reward": null,
+            "creation_time": 1741478849.9729283,
             "auxillary_file_paths": [
-                "results\\20250308\\shootingAgent\\shootingAgent-89617.pt"
+                "results\\20250308\\shootingAgent\\shootingAgent-123915.pt"
             ]
         }
     },

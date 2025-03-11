@@ -139,11 +139,20 @@ namespace InfimaGames.LowPolyShooterPack
             //Get Attachment Manager.
             attachmentManager = GetComponent<WeaponAttachmentManagerBehaviour>();
 
-            //Cache the game mode service. We only need this right here, but we'll cache it in case we ever need it again.
-            gameModeService = ServiceLocator.Current.Get<IGameModeService>();
-            //Cache the player character.
-            characterBehaviour = gameModeService.GetPlayerCharacter();
-            //Cache the world camera. We use this in line traces.
+            ////Cache the game mode service. We only need this right here, but we'll cache it in case we ever need it again.
+            //gameModeService = ServiceLocator.Current.Get<IGameModeService>();
+            ////Cache the player character.
+            //characterBehaviour = gameModeService.GetPlayerCharacter();
+            ////Cache the world camera. We use this in line traces.
+            //playerCamera = characterBehaviour.GetCameraWorld().transform;
+
+            // 从当前对象或父对象中获取该代理自己的 CharacterBehaviour 组件。
+            characterBehaviour = GetComponentInParent<CharacterBehaviour>();
+            if (characterBehaviour == null)
+            {
+                Debug.LogError("未在父对象中找到 CharacterBehaviour 组件，请检查预制体结构！");
+            }
+            // 从角色自身获取摄像机引用（确保每个代理都有独立的摄像机）。
             playerCamera = characterBehaviour.GetCameraWorld().transform;
         }
         protected override void Start()
@@ -218,7 +227,8 @@ namespace InfimaGames.LowPolyShooterPack
             const string stateName = "Fire";
             animator.Play(stateName, 0, 0.0f);
             //Reduce ammunition! We just shot, so we need to get rid of one!
-            ammunitionCurrent = Mathf.Clamp(ammunitionCurrent - 1, 0, magazineBehaviour.GetAmmunitionTotal());
+            //ammunitionCurrent = Mathf.Clamp(ammunitionCurrent - 1, 0, magazineBehaviour.GetAmmunitionTotal());
+            ammunitionCurrent = Mathf.Clamp(ammunitionCurrent , 0, magazineBehaviour.GetAmmunitionTotal());
 
             //Play all muzzle effects.
             muzzleBehaviour.Effect();

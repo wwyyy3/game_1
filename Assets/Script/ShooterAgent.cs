@@ -17,16 +17,11 @@ public class ShooterAgent : Agent
     [SerializeField] private GameManager gameManager;
     [SerializeField] private CameraLook cameraLook;
     [SerializeField] private Transform shootingPoint;
-    [SerializeField] private int wallLayer;
-    [SerializeField] private float spawnRadius = 100f;
-    [SerializeField] private float minMonsterDistance = 5f;
+    [SerializeField] private Camera agentCamera;
 
     [Header("Training Phase")]
     public bool pathfindingOnlyPhase = true;
 
-    [Header("Cooperative Settings")]
-    public ShooterAgent teammate;
-    public event Action<AgentActionType> OnTeammateAction;
     #endregion
 
     #region Internal State
@@ -34,9 +29,10 @@ public class ShooterAgent : Agent
     private Rigidbody rb;
     private int maxHealth = 10;
     private int currentHealth;
-    private float speedWalking = 5f;
+    private float speedWalking = 7f;
     private List<MonsterController> monsters = new List<MonsterController>();
     private static readonly object spawnLock = new object();
+    private float previousDistanceToGoal;
     #endregion
 
     #region Initialization
@@ -45,18 +41,14 @@ public class ShooterAgent : Agent
         character = GetComponent<Character>();
         rb = GetComponent<Rigidbody>();
         currentHealth = maxHealth;
-        Physics.IgnoreLayerCollision(gameObject.layer, wallLayer, false);
-
-        if (gameManager == null)
-            gameManager = GetComponentInParent<GameManager>();
     }
     #endregion
 
     #region Episode Handling
     public override void OnEpisodeBegin()
     {
-        CleanLegacyObjects();
         ResetAgent();
+        previousDistanceToGoal = Vector3.Distance(transform.localPosition, goal.transform.localPosition);
         StartCoroutine(DelayedSpawn());
         Debug.Log("episodeBegin");
     }
@@ -67,45 +59,14 @@ public class ShooterAgent : Agent
         SpawnObjects();                       
     }
 
-    private void CleanLegacyObjects()
-    {
-        
-        foreach (var m in monsters.ToArray())
-        {
-            if (m != null) Destroy(m.gameObject);
-        }
-        monsters.Clear();
-
-        
-        var agents = GameObject.FindGameObjectsWithTag("Player");
-        foreach (var a in agents)
-            if (a != gameObject && a != teammate?.gameObject) Destroy(a);
-    }
     #endregion
 
     #region Observation System
     public override void CollectObservations(VectorSensor sensor)
     {
-        // Self state
         sensor.AddObservation(transform.localPosition);
         sensor.AddObservation(goal.transform.localPosition);
         sensor.AddObservation(currentHealth / (float)maxHealth);
-
-        // Teammate observation
-        if (teammate != null)
-        {
-            sensor.AddObservation(teammate.transform.position);
-            sensor.AddObservation(teammate.currentHealth / (float)maxHealth);
-        }
-        else
-        {
-            sensor.AddObservation(Vector3.zero);
-            sensor.AddObservation(0f);
-        }
-
-        // Monster positions
-        foreach (var monster in monsters)
-            sensor.AddObservation(monster != null ? monster.transform.position : Vector3.zero);
     }
     #endregion
 
@@ -123,18 +84,9 @@ public class ShooterAgent : Agent
     {
         float moveX = Mathf.Clamp(actions.ContinuousActions[0], -1f, 1f);
         float moveZ = Mathf.Clamp(actions.ContinuousActions[1], -1f, 1f);
-
-        Vector3 moveDirection = (transform.forward * moveZ + transform.right * moveX).normalized;
-        if (!CheckWallCollision(moveDirection))
-        {
-            Vector3 targetVelocity = moveDirection * speedWalking;
-            rb.linearVelocity = new Vector3(targetVelocity.x, rb.linearVelocity.y, targetVelocity.z);
-        }
-        else
-        {
-            AddReward(-0.1f);
-            rb.linearVelocity = Vector3.zero; 
-        }
+        var movement = transform.forward * moveZ + transform.right * moveX;
+        movement *= speedWalking;
+        rb.linearVelocity = new Vector3(movement.x, rb.linearVelocity.y, movement.z);
     }
 
     private void HandleRotation(ActionBuffers actions)
@@ -148,17 +100,23 @@ public class ShooterAgent : Agent
 
     private void HandleShooting(ActionBuffers actions)
     {
-        Debug.DrawRay(shootingPoint.position, transform.forward * 200f, Color.green, 2f);
+        Debug.DrawRay(shootingPoint.position, transform.forward * 30f, Color.green, 2f);
         if (!pathfindingOnlyPhase && actions.DiscreteActions[0] == 1)
         {
             var layerMask = 1 << LayerMask.NameToLayer("Enemy");
-            if (Physics.Raycast(shootingPoint.position, transform.forward, out RaycastHit hit, 200f, layerMask))
-            {         
+            if (Physics.Raycast(shootingPoint.position, transform.forward, out RaycastHit hit, 20f, layerMask))
+            {
                 var monster = hit.collider.GetComponent<MonsterController>();
                 if (monster != null)
                 {
                     character.AgentFire();
                     AddReward(1f);
+
+                    if (monster.IsDead && monster.hitCount >= monster.maxHits)
+                    {
+                        AddReward(10f);
+                        Debug.Log("I killed the monster");
+                    }
                 }
             }
             else
@@ -166,11 +124,15 @@ public class ShooterAgent : Agent
                 AddReward(-0.1f);
             }
         }
-
     }
 
     private void ApplyBehaviorPenalty()
     {
+        float currentDistanceToGoal = Vector3.Distance(transform.localPosition, goal.transform.localPosition);
+        float distanceDiff = previousDistanceToGoal - currentDistanceToGoal;
+
+        AddReward(distanceDiff * 1f);
+        previousDistanceToGoal = currentDistanceToGoal;
 
         AddReward(-0.001f);
     }
@@ -178,34 +140,15 @@ public class ShooterAgent : Agent
 
     #region Environment Interaction
 
-
-    private bool CheckWallCollision(Vector3 direction)
-    {
-        return Physics.Raycast(transform.position, direction, 1f, wallLayer);
-    }
-
     private void CheckBoundary()
-    {
-        if (Physics.CheckSphere(transform.position, 1f, wallLayer))
+    {       
+        var wallLayer = 1 << LayerMask.NameToLayer("Wall"); 
+        if (Physics.CheckSphere(transform.localPosition, 0.1f, wallLayer))
         {
             AddReward(-5f);
-            Debug.Log("teach the wall");
+            Debug.Log("Collided with wall");
             EndEpisode();
         }
-    }
-    #endregion
-
-    #region Cooperative System
-    public void NotifyTeamAction(AgentActionType actionType)
-    {
-        OnTeammateAction?.Invoke(actionType);
-        float reward = actionType switch
-        {
-            AgentActionType.GoalReached => 30f,
-            AgentActionType.MonsterKilled => 5f,
-            _ => 0f
-        };
-        AddReward(reward);
     }
     #endregion
 
@@ -214,34 +157,9 @@ public class ShooterAgent : Agent
     {
         lock (spawnLock)
         {
-            //SpawnMonsters();
-            gameManager.SpawnMonsters(Vector3.zero);
+            gameManager.SpawnMonsters(transform.parent.localPosition);
             monsters.AddRange(UnityEngine.Object.FindObjectsByType<MonsterController>(FindObjectsSortMode.None));
-            SpawnTeammate();
-        }
-    }
-
-    private void SpawnTeammate()
-    {
-        if (teammate != null)
-        {
-            bool spawned = false;
-            Vector3[] directions = { transform.right, transform.forward, -transform.right, -transform.forward };
-            foreach (var dir in directions)
-            {
-                Vector3 spawnPos = transform.position + dir * 2f;
-                if (!Physics.CheckSphere(spawnPos, 0.5f, wallLayer))
-                {
-                    teammate.transform.position = spawnPos;
-                    teammate.ResetAgent();
-                    spawned = true;
-                    break;
-                }
-            }
-            if (!spawned)
-            {
-                EndEpisode();  
-            }
+            
         }
     }
     #endregion
@@ -265,7 +183,8 @@ public class ShooterAgent : Agent
     {
         currentHealth = maxHealth;
         rb.linearVelocity = Vector3.zero;
-        transform.localPosition = new Vector3(1.4f, -9.63769f, -0.6f);
+        transform.localPosition = new Vector3(50.869f, -8.451f, 27.96287f);
+        transform.localRotation = Quaternion.Euler(0f, -174.29f, 0f);
         Physics.SyncTransforms();
     }
     #endregion
@@ -274,7 +193,7 @@ public class ShooterAgent : Agent
     private void GoalReached()
     {
         AddReward(100f);
-        NotifyTeamAction(AgentActionType.GoalReached);
+       // NotifyTeamAction(AgentActionType.GoalReached);
         EndEpisode();
     }
 
@@ -283,19 +202,45 @@ public class ShooterAgent : Agent
         if (other.CompareTag("Goal"))
             GoalReached();
     }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Wall"))
+        {
+            AddReward(-0.05f);
+            AddReward(-0.05f);
+        }
+        if (collision.gameObject.CompareTag("Building"))
+        {
+            AddReward(-0.05f);
+        }
+    }
+
+    private void OnCollisionStay(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Wall"))
+        {
+            AddReward(-0.01f * Time.fixedDeltaTime);
+        }
+        if (collision.gameObject.CompareTag("Building"))
+        {
+            AddReward(-0.01f * Time.fixedDeltaTime);
+        }
+    }
+
     #endregion
 
     #region Debug
-    //public override void Heuristic(in ActionBuffers actionsOut)
-    //{
-    //    var continuous = actionsOut.ContinuousActions;
-    //    continuous[0] = Input.GetAxisRaw("Horizontal");
-    //    continuous[1] = Input.GetAxisRaw("Vertical");
-    //    continuous[2] = Input.GetAxis("Mouse X");
-    //    continuous[3] = Input.GetAxis("Mouse Y");
+    public override void Heuristic(in ActionBuffers actionsOut)
+    {
+        var continuous = actionsOut.ContinuousActions;
+        continuous[0] = Input.GetAxisRaw("Horizontal");
+        continuous[1] = Input.GetAxisRaw("Vertical");
+        continuous[2] = Input.GetAxis("Mouse X");
+        continuous[3] = Input.GetAxis("Mouse Y");
 
-    //    var discrete = actionsOut.DiscreteActions;
-    //    discrete[0] = Input.GetKey(KeyCode.Space) ? 1 : 0;
-    //}
+        var discrete = actionsOut.DiscreteActions;
+        discrete[0] = Input.GetKey(KeyCode.Space) ? 1 : 0;
+    }
     #endregion
 }

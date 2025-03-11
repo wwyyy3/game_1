@@ -1,9 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.Services.Analytics.Internal;
 using UnityEngine;
-using InfimaGames.LowPolyShooterPack;
 using UnityEngine.AI;
+using InfimaGames.LowPolyShooterPack;
 
 public class MonsterController : MonoBehaviour
 {
@@ -24,7 +23,6 @@ public class MonsterController : MonoBehaviour
     [Header("Monster Movement")]
     public float walkingSpeed = 4f;
     public float runningSpeed = 6f;
-    private Transform player;
 
     [Header("Attack Settings")]
     public float attackRange = 1.5f; 
@@ -41,55 +39,70 @@ public class MonsterController : MonoBehaviour
     #region Internal State
     private bool isDead = false;
     private float lastWanderTime;
-    private ShooterAgent playerAgent;
     #endregion
+
+    public bool IsDead => isDead;
+
 
     void Start()
     {
         monsterAgent = GetComponent<NavMeshAgent>();
-        player = GameObject.FindGameObjectWithTag("Player").transform;
         lastWanderTime = Time.time;
-        playerAgent = player.GetComponent<ShooterAgent>();
     }
 
     void Update()
     {
         if (isDead) return;
 
-        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+        ShooterAgent targetPlayer = GetClosestPlayer();
 
-        //  Make the monster face the direction of movement
-        Vector3 moveDirection = monsterAgent.velocity;
-        if (moveDirection.sqrMagnitude > 0.1f)
+        if (targetPlayer != null)
         {
-            transform.forward = new Vector3(moveDirection.x, 0, moveDirection.z).normalized;
-        }
+            Transform targetTransform = targetPlayer.transform;
+            float distanceToPlayer = Vector3.Distance(transform.position, targetTransform.position);
 
-        // Check if the player is within the chase range
-        if (distanceToPlayer <= chaseRadius)
-        {
-            monsterAgent.speed = runningSpeed;
-            monsterAgent.SetDestination(player.position);
-            animator.SetBool("isWalking", false);
-            animator.SetBool("isRunning", true);
-
-            // If within attack range
-            if (distanceToPlayer <= attackRange)
+            Vector3 moveDirection = monsterAgent.velocity;
+            if (moveDirection.sqrMagnitude > 0.1f)
             {
-                monsterAgent.isStopped = true;
-                if (canAttack)
+                transform.forward = new Vector3(moveDirection.x, 0, moveDirection.z).normalized;
+            }
+
+            if (distanceToPlayer <= chaseRadius)
+            {
+                monsterAgent.speed = runningSpeed;
+                monsterAgent.SetDestination(targetTransform.position);
+                animator.SetBool("isWalking", false);
+                animator.SetBool("isRunning", true);
+
+                if (distanceToPlayer <= attackRange)
                 {
-                    StartCoroutine(Attack());
+                    monsterAgent.isStopped = true;
+                    if (canAttack)
+                    {
+                        StartCoroutine(Attack(targetPlayer));
+                    }
+                }
+                else
+                {
+                    monsterAgent.isStopped = false;
                 }
             }
             else
             {
-                monsterAgent.isStopped = false;
+                monsterAgent.speed = walkingSpeed;
+                animator.SetBool("isRunning", false);
+                animator.SetBool("isWalking", monsterAgent.velocity.magnitude > 0.1f);
+
+                if (Time.time - lastWanderTime >= wanderInterval && monsterAgent.remainingDistance < 0.5f)
+                {
+                    Vector3 newPos = RandomNavSphere(transform.position, wanderRadius, -1);
+                    monsterAgent.SetDestination(newPos);
+                    lastWanderTime = Time.time;
+                }
             }
         }
         else
         {
-            // Random wandering mode
             monsterAgent.speed = walkingSpeed;
             animator.SetBool("isRunning", false);
             animator.SetBool("isWalking", monsterAgent.velocity.magnitude > 0.1f);
@@ -102,7 +115,6 @@ public class MonsterController : MonoBehaviour
             }
         }
 
-        //  Step climbing
         Vector3 horizontalVelocity = new Vector3(monsterAgent.velocity.x, 0, monsterAgent.velocity.z);
         if (horizontalVelocity.sqrMagnitude > 0.1f)
         {
@@ -112,37 +124,19 @@ public class MonsterController : MonoBehaviour
 
     private Vector3 RandomNavSphere(Vector3 origin, float dist, int layermask)
     {
-        // Generate a random direction
         Vector3 randDirection = Random.insideUnitSphere * dist;
         randDirection += origin;
 
-        // Find the nearest valid point on the navigation mesh
         NavMeshHit navHit;
         NavMesh.SamplePosition(randDirection, out navHit, dist, layermask);
         return navHit.position;
     }
-
-    //public void GetShot(int damage, ShooterAgent shooter)
-    //{
-    //    ApplyDamage(damage, shooter);
-    //}
-
-    //private void ApplyDamage(int damage, ShooterAgent shooter)
-    //{
-    //    CurrentHealth -= damage;
-
-    //    if (CurrentHealth <= 0)
-    //    {
-    //        Die(shooter);
-    //    }
-    //}
 
     public void TakeDamage(int damage = 1, Vector3 hitDirection = default)
     {
         if (isDead) return;
 
         hitCount += damage;
-        playerAgent.AddReward(20f);
         Vector3 knockback = hitDirection.normalized * 2f;
         transform.position += new Vector3(knockback.x, 0, knockback.z);
         animator.SetTrigger("getHit");
@@ -170,18 +164,15 @@ public class MonsterController : MonoBehaviour
         Destroy(gameObject);
     }
 
-    IEnumerator Attack()
+    IEnumerator Attack(ShooterAgent target)
     {
         canAttack = false;
         monsterAgent.isStopped = true;
         animator.SetTrigger("isAttacking");
 
-        if (player != null)
+        if (target != null)
         {
-            if (playerAgent != null)
-            {
-                playerAgent.TakeDamage(1);
-            }
+            target.TakeDamage(1);
         }
 
         yield return new WaitForSeconds(attackCooldown);
@@ -207,5 +198,29 @@ public class MonsterController : MonoBehaviour
                 }
             }
         }
+    }
+
+    private ShooterAgent GetClosestPlayer()
+    {
+        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+        if (players.Length == 0)
+        {
+            return null;
+        }
+
+        ShooterAgent closestAgent = players[0].GetComponent<ShooterAgent>();
+        float closestDistance = Vector3.Distance(transform.position, players[0].transform.position);
+
+        for (int i = 1; i < players.Length; i++)
+        {
+            float distance = Vector3.Distance(transform.position, players[i].transform.position);
+            if (distance < closestDistance)
+            {
+                closestDistance = distance;
+                closestAgent = players[i].GetComponent<ShooterAgent>();
+            }
+        }
+
+        return closestAgent;
     }
 }

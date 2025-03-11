@@ -59,7 +59,8 @@ namespace InfimaGames.LowPolyShooterPack
         private void Awake()
         {
             //Get Player Character.
-            playerCharacter = ServiceLocator.Current.Get<IGameModeService>().GetPlayerCharacter();
+            playerCharacter = GetComponentInParent<CharacterBehaviour>();
+            //playerCharacter = ServiceLocator.Current.Get<IGameModeService>().GetPlayerCharacter();
             //Cache the rigidbody.
             playerCharacterRigidbody = playerCharacter.GetComponent<Rigidbody>();
         }
@@ -143,6 +144,12 @@ namespace InfimaGames.LowPolyShooterPack
 
             //Return.
             return rotation;
+        }
+
+        public void InitCamera()
+        {
+            pendingLookInput = Vector2.zero;
+            transform.localRotation = Quaternion.identity;
         }
 
         #endregion

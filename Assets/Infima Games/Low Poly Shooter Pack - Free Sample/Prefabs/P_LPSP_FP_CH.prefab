@@ -1398,13 +1398,9 @@ MonoBehaviour:
   goal: {fileID: 0}
   gameManager: {fileID: 0}
   cameraLook: {fileID: 7954147704929373820}
-  shootingPoint: {fileID: 2748913124992463393}
-  mapParent: {fileID: 0}
-  wallLayer: 8
-  spawnRadius: 20
-  minMonsterDistance: 5
+  shootingPoint: {fileID: 3180172974620047470}
+  agentCamera: {fileID: 0}
   pathfindingOnlyPhase: 0
-  teammate: {fileID: 1060594985761518732}
 --- !u!114 &7158966628633800212
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9759,6 +9755,12 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9482e0a2ae6a92742bbe72e00f29f763, type: 3}
+--- !u!4 &3180172974620047470 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 9220326634426774332, guid: 9482e0a2ae6a92742bbe72e00f29f763,
+    type: 3}
+  m_PrefabInstance: {fileID: 6041315293858548562}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &8195332293463410009 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2480563158121336331, guid: 9482e0a2ae6a92742bbe72e00f29f763,

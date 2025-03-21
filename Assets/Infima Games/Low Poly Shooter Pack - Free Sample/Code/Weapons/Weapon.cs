@@ -146,13 +146,7 @@ namespace InfimaGames.LowPolyShooterPack
             ////Cache the world camera. We use this in line traces.
             //playerCamera = characterBehaviour.GetCameraWorld().transform;
 
-            // 从当前对象或父对象中获取该代理自己的 CharacterBehaviour 组件。
             characterBehaviour = GetComponentInParent<CharacterBehaviour>();
-            if (characterBehaviour == null)
-            {
-                Debug.LogError("未在父对象中找到 CharacterBehaviour 组件，请检查预制体结构！");
-            }
-            // 从角色自身获取摄像机引用（确保每个代理都有独立的摄像机）。
             playerCamera = characterBehaviour.GetCameraWorld().transform;
         }
         protected override void Start()

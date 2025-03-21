@@ -33,6 +33,10 @@ public class ShooterAgent : Agent
     private List<MonsterController> monsters = new List<MonsterController>();
     private static readonly object spawnLock = new object();
     private float previousDistanceToGoal;
+    private float distanceDiffOfPrevious;
+    private Vector3 previousPosition;
+    private float timer;
+    private float comparisonTime = 1f;
     #endregion
 
     #region Initialization
@@ -49,7 +53,9 @@ public class ShooterAgent : Agent
     {
         ResetAgent();
         previousDistanceToGoal = Vector3.Distance(transform.localPosition, goal.transform.localPosition);
+        previousPosition = transform.localPosition;//在这里设置初始值
         StartCoroutine(DelayedSpawn());
+        distanceDiffOfPrevious = 0f;
         Debug.Log("episodeBegin");
     }
 
@@ -66,7 +72,7 @@ public class ShooterAgent : Agent
     {
         sensor.AddObservation(transform.localPosition);
         sensor.AddObservation(goal.transform.localPosition);
-        sensor.AddObservation(currentHealth / (float)maxHealth);
+        sensor.AddObservation(currentHealth / maxHealth);
     }
     #endregion
 
@@ -78,6 +84,7 @@ public class ShooterAgent : Agent
         HandleShooting(actions);
         ApplyBehaviorPenalty();
         CheckBoundary();
+        //Check();
     }
 
     private void HandleMovement(ActionBuffers actions)
@@ -100,19 +107,18 @@ public class ShooterAgent : Agent
 
     private void HandleShooting(ActionBuffers actions)
     {
-        Debug.DrawRay(shootingPoint.position, transform.forward * 30f, Color.green, 2f);
+        Debug.DrawRay(shootingPoint.position, -shootingPoint.up * 100f, Color.green, 1f);
         if (!pathfindingOnlyPhase && actions.DiscreteActions[0] == 1)
         {
-
             var wallMask = 1 << LayerMask.NameToLayer("Wall");
-            if (Physics.Raycast(shootingPoint.position, transform.forward, out RaycastHit detection, 20f, wallMask))
+            if (Physics.Raycast(shootingPoint.position, -shootingPoint.up, out RaycastHit detection, 100f, wallMask))
             {
                 AddReward(-0.005f);
                 return;
             }
 
             var enemyMask = 1 << LayerMask.NameToLayer("Enemy");
-            if (Physics.Raycast(shootingPoint.position, transform.forward, out RaycastHit hit, 20f, enemyMask))
+            if (Physics.Raycast(shootingPoint.position, -shootingPoint.up, out RaycastHit hit, 100f, enemyMask))
             {
                 var monster = hit.collider.GetComponent<MonsterController>();
                 if (monster != null)
@@ -135,12 +141,34 @@ public class ShooterAgent : Agent
     }
 
     private void ApplyBehaviorPenalty()
-    {
+    {       
         float currentDistanceToGoal = Vector3.Distance(transform.localPosition, goal.transform.localPosition);
-        float distanceDiff = previousDistanceToGoal - currentDistanceToGoal;
+        float distanceDiffOfGoal = previousDistanceToGoal - currentDistanceToGoal;
 
-        AddReward(distanceDiff * 0.5f);
+        AddReward(distanceDiffOfGoal * 0.1f);
         previousDistanceToGoal = currentDistanceToGoal;
+
+        distanceDiffOfPrevious = Vector3.Distance(transform.localPosition, previousPosition);
+        timer += Time.deltaTime;
+        if (timer >= comparisonTime)
+        {
+            previousPosition = transform.localPosition;
+
+            if (distanceDiffOfPrevious > 1)
+            {
+                AddReward(distanceDiffOfPrevious * 0.25f);
+
+            }
+            else if (distanceDiffOfPrevious > 3)
+            {
+                AddReward(distanceDiffOfPrevious * 0.5f);
+            }
+            else
+            {
+                AddReward((distanceDiffOfPrevious - 1) * 0.001f);
+            }
+            timer = 0f;
+        }
 
         AddReward(-0.001f);
     }
@@ -155,11 +183,11 @@ public class ShooterAgent : Agent
         {
             AddReward(-0.3f);
             Debug.Log("Collided with wall");
-            //EndEpisode();
         }
         if (transform.localPosition.y < -13.5f)
         {
             Debug.Log("fall down");
+            AddReward(-5f);
             EndEpisode();
         }
 
@@ -169,11 +197,14 @@ public class ShooterAgent : Agent
     #region Spawn System
     private void SpawnObjects()
     {
-        lock (spawnLock)
+        if (!pathfindingOnlyPhase) 
         {
-            gameManager.SpawnMonsters(transform.parent.localPosition);
-            monsters.AddRange(UnityEngine.Object.FindObjectsByType<MonsterController>(FindObjectsSortMode.None));           
-        }
+            lock (spawnLock)
+            {
+                gameManager.SpawnMonsters(transform.parent.localPosition);
+                monsters.AddRange(UnityEngine.Object.FindObjectsByType<MonsterController>(FindObjectsSortMode.None));
+            }
+        }       
     }
     #endregion
 
@@ -181,11 +212,11 @@ public class ShooterAgent : Agent
     public void TakeDamage(int damage)
     {
         currentHealth -= damage;
-        AddReward(-8f);
+        AddReward(-5f);
 
         if (currentHealth <= 0)
         {
-            AddReward(-100f);
+            AddReward(-80f);
             EndEpisode();
         }
     }
@@ -196,8 +227,14 @@ public class ShooterAgent : Agent
     {
         currentHealth = maxHealth;
         rb.linearVelocity = Vector3.zero;
-        transform.localPosition = new Vector3(50.869f, -8.451f, 27.96287f);
-        transform.localRotation = Quaternion.Euler(0f, -174.29f, 0f);
+        transform.localPosition = new Vector3(50f, -7f, 27f);
+        transform.rotation = Quaternion.Euler(0f, -174.29f, 0f);
+        cameraLook = GetComponentInChildren<CameraLook>();
+        if (cameraLook != null)
+        {
+            cameraLook.InitCamera();
+        }
+
         Physics.SyncTransforms();
     }
     #endregion
@@ -206,7 +243,6 @@ public class ShooterAgent : Agent
     private void GoalReached()
     {
         AddReward(100f);
-       // NotifyTeamAction(AgentActionType.GoalReached);
         EndEpisode();
     }
 
@@ -221,11 +257,12 @@ public class ShooterAgent : Agent
         if (collision.gameObject.CompareTag("Wall"))
         {
             AddReward(-0.05f);
-            AddReward(-0.05f);
+            //transform.Rotate(0, UnityEngine.Random.Range(0f, 90f), 0);
         }
         if (collision.gameObject.CompareTag("Building"))
         {
             AddReward(-0.05f);
+            //transform.Rotate(0, UnityEngine.Random.Range(0f, 90f), 0);
         }
     }
 
@@ -242,6 +279,19 @@ public class ShooterAgent : Agent
     }
 
     #endregion
+
+    private void Check() 
+    {
+        if (pathfindingOnlyPhase)
+        {
+            if (GetCumulativeReward() < -50f)
+            {
+                Debug.Log("cumulative reward < -50 end episode。");
+                EndEpisode();
+            }
+        }
+    }
+
 
     #region Debug
     public override void Heuristic(in ActionBuffers actionsOut)

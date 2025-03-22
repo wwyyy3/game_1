@@ -13,27 +13,27 @@ public class MonsterController : MonoBehaviour
 
     [Header("Navigation Settings")]
     public NavMeshAgent monsterAgent;
-    public float wanderRadius = 10f;
-    public float wanderInterval = 5f;
-    public float chaseRadius = 15f;
+    private float wanderRadius = 10f;
+    private float wanderInterval = 5f;
+    private float chaseRadius = 15f;
 
     [Header("Monster Animations")]
     public Animator animator;
 
     [Header("Monster Movement")]
-    public float walkingSpeed = 2f;
-    public float runningSpeed = 5f;
+    private float walkingSpeed = 2f;
+    private float runningSpeed = 3f;
 
     [Header("Attack Settings")]
-    public float attackRange = 1.5f; 
-    public float attackCooldown = 2.16f;
+    private float attackRange = 1.5f;
+    private float attackCooldown = 2.16f;
     private bool canAttack = true;
 
     [Header("Step Climbing Settings")]
     [Tooltip("Maximum step height allowed for climbing")]
-    public float stepHeight = 0.5f;
+    private float stepHeight = 0.5f;
     [Tooltip("Forward distance to check for steps")]
-    public float stepCheckDistance = 0.5f;
+    private float stepCheckDistance = 0.5f;
     #endregion
 
     #region Internal State
@@ -43,7 +43,8 @@ public class MonsterController : MonoBehaviour
 
     public bool IsDead => isDead;
 
-
+    [Header("Shooter Agent")]
+    [SerializeField] private ShooterAgent shooterAgent;
     void Start()
     {
         monsterAgent = GetComponent<NavMeshAgent>();
@@ -132,16 +133,21 @@ public class MonsterController : MonoBehaviour
         return navHit.position;
     }
 
-    public void TakeDamage(int damage = 1, Vector3 hitDirection = default)
+    public void TakeDamage(int damage = 1, Vector3 hitDirection = default, ShooterAgent attacker = null)
     {
         if (isDead) return;
+
+        if (attacker != null)
+        {
+            shooterAgent = attacker;
+        }
 
         hitCount += damage;
         Vector3 knockback = hitDirection.normalized * 2f;
         transform.position += new Vector3(knockback.x, 0, knockback.z);
         animator.SetTrigger("getHit");
 
-        if (hitCount >= maxHits)
+        if (hitCount >= maxHits && !isDead)
         {
             Die();
         }
@@ -154,13 +160,19 @@ public class MonsterController : MonoBehaviour
 
         animator.SetBool("die", true);
         monsterAgent.isStopped = true;
-
+        //Destroy(gameObject);
+        if (shooterAgent != null)
+        {
+            shooterAgent.AddReward(20f);
+            Debug.Log("π÷ŒÔÀ¿Õˆ+20∑÷");
+        }
         StartCoroutine(DestroyAfterDeath());
+
     }
 
     private IEnumerator DestroyAfterDeath()
     {
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(0.1f);
         Destroy(gameObject);
     }
 

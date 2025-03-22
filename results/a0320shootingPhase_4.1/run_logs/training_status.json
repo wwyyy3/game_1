@@ -2,22 +2,31 @@
     "shootingAgent": {
         "checkpoints": [
             {
-                "steps": 193065,
-                "file_path": "results\\a0320shootingPhase_4.1\\shootingAgent\\shootingAgent-193065.onnx",
-                "reward": 156.89712168350815,
-                "creation_time": 1742519679.7869508,
+                "steps": 999993,
+                "file_path": "results\\a0320shootingPhase_4.1\\shootingAgent\\shootingAgent-999993.onnx",
+                "reward": -84.54317409638315,
+                "creation_time": 1742581542.751637,
                 "auxillary_file_paths": [
-                    "results\\a0320shootingPhase_4.1\\shootingAgent\\shootingAgent-193065.pt"
+                    "results\\a0320shootingPhase_4.1\\shootingAgent\\shootingAgent-999993.pt"
+                ]
+            },
+            {
+                "steps": 1053753,
+                "file_path": "results\\a0320shootingPhase_4.1\\shootingAgent\\shootingAgent-1053753.onnx",
+                "reward": null,
+                "creation_time": 1742581657.960729,
+                "auxillary_file_paths": [
+                    "results\\a0320shootingPhase_4.1\\shootingAgent\\shootingAgent-1053753.pt"
                 ]
             }
         ],
         "final_checkpoint": {
-            "steps": 193065,
+            "steps": 1053753,
             "file_path": "results\\a0320shootingPhase_4.1\\shootingAgent.onnx",
-            "reward": 156.89712168350815,
-            "creation_time": 1742519679.7869508,
+            "reward": null,
+            "creation_time": 1742581657.960729,
             "auxillary_file_paths": [
-                "results\\a0320shootingPhase_4.1\\shootingAgent\\shootingAgent-193065.pt"
+                "results\\a0320shootingPhase_4.1\\shootingAgent\\shootingAgent-1053753.pt"
             ]
         }
     },

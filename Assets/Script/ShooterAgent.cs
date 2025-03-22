@@ -53,8 +53,9 @@ public class ShooterAgent : Agent
     {
         ResetAgent();
         previousDistanceToGoal = Vector3.Distance(transform.localPosition, goal.transform.localPosition);
-        previousPosition = transform.localPosition;//在这里设置初始值
-        StartCoroutine(DelayedSpawn());
+        previousPosition = transform.localPosition;
+        SpawnObjects();
+        //StartCoroutine(DelayedSpawn());
         distanceDiffOfPrevious = 0f;
         Debug.Log("episodeBegin");
     }
@@ -125,12 +126,14 @@ public class ShooterAgent : Agent
                 {
                     character.AgentFire();
                     AddReward(1f);
+                    Debug.Log("对怪物开枪了，他死了没有 "+monster.IsDead);
+                    ////if (monster.IsDead && monster.hitCount >= monster.maxHits)
+                    //if (monster.IsDead)
+                    //{
 
-                    if (monster.IsDead && monster.hitCount >= monster.maxHits)
-                    {
-                        AddReward(10f);
-                        Debug.Log("I killed the monster");
-                    }
+                    //    AddReward(20f);
+                    //    Debug.Log("我杀了怪物");
+                    //}
                 }                   
             }
             else
@@ -216,7 +219,7 @@ public class ShooterAgent : Agent
 
         if (currentHealth <= 0)
         {
-            AddReward(-80f);
+            //AddReward(-10f);
             EndEpisode();
         }
     }

@@ -1898,16 +1898,9 @@ MonoBehaviour:
   maxHits: 1
   hitCount: 0
   monsterAgent: {fileID: 795088126089228620}
-  wanderRadius: 10
-  wanderInterval: 5
-  chaseRadius: 15
   animator: {fileID: 3490026887111630760}
-  walkingSpeed: 4
-  runningSpeed: 6
-  attackRange: 1.5
-  attackCooldown: 2.16
-  stepHeight: 0.5
-  stepCheckDistance: 0.5
+  shooterAgent: {fileID: 1060594985761518732, guid: 19eadcf8fbed56b4da77ca94c1b4145f,
+    type: 3}
 --- !u!1 &3490026887102114922
 GameObject:
   m_ObjectHideFlags: 0

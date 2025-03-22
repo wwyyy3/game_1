@@ -126,21 +126,6 @@ public class Projectile : MonoBehaviour
         }
     }
 
-    //private void OnTriggerEnter(Collider other)
-    //{
-    //    if (other.CompareTag("Monster"))
-    //    {
-    //        MonsterController monster = other.GetComponent<MonsterController>();
-    //        if (monster != null)
-    //        {
-    //            Debug.Log("Bullet hit: " + other.gameObject.name);
-    //            monster.TakeDamage(1);
-    //            Debug.Log("Monster hit!");
-    //        }
-    //        Destroy(gameObject);
-    //    }
-    //}
-
     private IEnumerator DestroyTimer()
     {
         //Wait random time based on min and max values

@@ -37,10 +37,10 @@ behaviors:
           memory: null
           goal_conditioning_type: hyper
           deterministic: false
-    init_path: results\a0320PathFinding_4\shootingAgent\checkpoint.pt
+    init_path: null
     keep_checkpoints: 5
     even_checkpoints: false
-    max_steps: 2000000
+    max_steps: 5000000
     time_horizon: 64
     summary_freq: 20000
     threaded: false
@@ -69,10 +69,10 @@ engine_settings:
 environment_parameters: null
 checkpoint_settings:
   run_id: a0320shootingPhase_4.1
-  initialize_from: a0320PathFinding_4
+  initialize_from: null
   load_model: false
   resume: false
-  force: false
+  force: true
   train_model: false
   inference: false
   results_dir: results

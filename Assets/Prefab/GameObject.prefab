@@ -9858,16 +9858,27 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 842830665357719347}
     m_Modifications:
+    - target: {fileID: 809251768001992528, guid: 19eadcf8fbed56b4da77ca94c1b4145f,
+        type: 3}
+      propertyPath: m_Model
+      value: 
+      objectReference: {fileID: 5022602860645237092, guid: cb189ae9e4032b44996b9f364342e04e,
+        type: 3}
+    - target: {fileID: 809251768001992528, guid: 19eadcf8fbed56b4da77ca94c1b4145f,
+        type: 3}
+      propertyPath: m_BehaviorType
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 916095938892669238, guid: 19eadcf8fbed56b4da77ca94c1b4145f,
+        type: 3}
+      propertyPath: m_TargetDisplay
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 1060594985761518732, guid: 19eadcf8fbed56b4da77ca94c1b4145f,
         type: 3}
       propertyPath: goal
       value: 
       objectReference: {fileID: 7300034585925668491}
-    - target: {fileID: 1060594985761518732, guid: 19eadcf8fbed56b4da77ca94c1b4145f,
-        type: 3}
-      propertyPath: MaxStep
-      value: 12000
-      objectReference: {fileID: 0}
     - target: {fileID: 1060594985761518732, guid: 19eadcf8fbed56b4da77ca94c1b4145f,
         type: 3}
       propertyPath: mapParent
@@ -9888,11 +9899,6 @@ PrefabInstance:
       propertyPath: gameManager
       value: 
       objectReference: {fileID: 3174443262824599323}
-    - target: {fileID: 1060594985761518732, guid: 19eadcf8fbed56b4da77ca94c1b4145f,
-        type: 3}
-      propertyPath: pathfindingOnlyPhase
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 2748913124992463393, guid: 19eadcf8fbed56b4da77ca94c1b4145f,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -9948,9 +9954,9 @@ PrefabInstance:
       propertyPath: m_Name
       value: P_LPSP_FP_CH
       objectReference: {fileID: 0}
-    - target: {fileID: 7158966628633800212, guid: 19eadcf8fbed56b4da77ca94c1b4145f,
+    - target: {fileID: 6408767160419437801, guid: 19eadcf8fbed56b4da77ca94c1b4145f,
         type: 3}
-      propertyPath: DecisionPeriod
+      propertyPath: m_TargetDisplay
       value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []

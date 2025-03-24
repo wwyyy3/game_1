@@ -22,6 +22,10 @@ behaviors:
       extrinsic:
         strength: 1.0
         gamma: 0.99
+      # curiosity:
+      #   strength: 0.2
+      #   gamma: 0.99
+      #   encoding_size: 256
     keep_checkpoints: 5
     checkpoint_interval: 2000000
     max_steps: 8000000

@@ -49,6 +49,10 @@ public class MonsterController : MonoBehaviour
     {
         monsterAgent = GetComponent<NavMeshAgent>();
         lastWanderTime = Time.time;
+        if (shooterAgent.shootingOnlyPhase)
+        {
+            chaseRadius = 50f;
+        }
     }
 
     void Update()
@@ -70,6 +74,10 @@ public class MonsterController : MonoBehaviour
 
             if (distanceToPlayer <= chaseRadius)
             {
+                if (shooterAgent.shootingOnlyPhase)
+                {
+                    runningSpeed = 2f;
+                }
                 monsterAgent.speed = runningSpeed;
                 monsterAgent.SetDestination(targetTransform.position);
                 animator.SetBool("isWalking", false);

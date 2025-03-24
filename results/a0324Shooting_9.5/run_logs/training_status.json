@@ -14,7 +14,34 @@
                 "auxillary_file_paths": [
                     "results\\a0324Shooting_9.5\\shootingAgent\\shootingAgent-1999983.pt"
                 ]
+            },
+            {
+                "steps": 1999983,
+                "file_path": "results\\a0324Shooting_9.5\\shootingAgent\\shootingAgent-1999983.onnx",
+                "reward": null,
+                "creation_time": 1742802155.8764896,
+                "auxillary_file_paths": [
+                    "results\\a0324Shooting_9.5\\shootingAgent\\shootingAgent-1999983.pt"
+                ]
+            },
+            {
+                "steps": 2191978,
+                "file_path": "results\\a0324Shooting_9.5\\shootingAgent\\shootingAgent-2191978.onnx",
+                "reward": 99.4380154051424,
+                "creation_time": 1742802405.4676726,
+                "auxillary_file_paths": [
+                    "results\\a0324Shooting_9.5\\shootingAgent\\shootingAgent-2191978.pt"
+                ]
             }
-        ]
+        ],
+        "final_checkpoint": {
+            "steps": 2191978,
+            "file_path": "results\\a0324Shooting_9.5\\shootingAgent.onnx",
+            "reward": 99.4380154051424,
+            "creation_time": 1742802405.4676726,
+            "auxillary_file_paths": [
+                "results\\a0324Shooting_9.5\\shootingAgent\\shootingAgent-2191978.pt"
+            ]
+        }
     }
 }

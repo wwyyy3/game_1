@@ -5,14 +5,18 @@ using UnityEngine.AI;
 
 public class GameManager : MonoBehaviour
 {
+
     [SerializeField] private GameObject monsterPrefab;
     [SerializeField] private int monsterCount = 5;
     [SerializeField] private float spawnRadius = 100f;
+
 
     // Stores the monster instances in the current scene
     private List<GameObject> spawnedMonsters = new List<GameObject>();
 
     private Vector3 lastSpawnCenter;
+    [Header("Shooter Agent")]
+    [SerializeField] private ShooterAgent shooterAgent;
 
     /// <summary>
     /// Spawns a specified number of monsters.
@@ -25,6 +29,10 @@ public class GameManager : MonoBehaviour
 
         for (int i = 0; i < monsterCount; i++)
         {
+            if (shooterAgent.shootingOnlyPhase)
+            {
+                spawnRadius = 20f;
+            }
             Vector3 spawnPos = GetRandomNavMeshPosition(center, spawnRadius);
             GameObject monster = Instantiate(monsterPrefab, spawnPos, Quaternion.identity,transform);
             spawnedMonsters.Add(monster);
@@ -45,10 +53,12 @@ public class GameManager : MonoBehaviour
         }
         spawnedMonsters.Clear();
     }
+    public int GetAliveMonsterCount()
+    {
+        spawnedMonsters.RemoveAll(m => m == null);
+        return spawnedMonsters.Count;
+    }
 
-    /// <summary>
-    /// Gets a random position on the NavMesh.
-    /// </summary>
     private Vector3 GetRandomNavMeshPosition(Vector3 center, float radius)
     {
         const int maxAttempts = 10;

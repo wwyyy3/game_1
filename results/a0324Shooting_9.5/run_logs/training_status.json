@@ -1,0 +1,20 @@
+{
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.1.0",
+        "torch_version": "2.2.2+cu121"
+    },
+    "shootingAgent": {
+        "checkpoints": [
+            {
+                "steps": 1999983,
+                "file_path": "results\\a0324Shooting_9.5\\shootingAgent\\shootingAgent-1999983.onnx",
+                "reward": 105.6508403820917,
+                "creation_time": 1742796389.9352696,
+                "auxillary_file_paths": [
+                    "results\\a0324Shooting_9.5\\shootingAgent\\shootingAgent-1999983.pt"
+                ]
+            }
+        ]
+    }
+}

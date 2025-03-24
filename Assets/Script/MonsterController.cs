@@ -15,18 +15,18 @@ public class MonsterController : MonoBehaviour
     public NavMeshAgent monsterAgent;
     private float wanderRadius = 10f;
     private float wanderInterval = 5f;
-    private float chaseRadius = 15f;
+    private float chaseRadius = 10f;
 
     [Header("Monster Animations")]
     public Animator animator;
 
     [Header("Monster Movement")]
     private float walkingSpeed = 2f;
-    private float runningSpeed = 3f;
+    private float runningSpeed = 7f;
 
     [Header("Attack Settings")]
     private float attackRange = 1.5f;
-    private float attackCooldown = 2.16f;
+    private float attackCooldown = 5f;
     private bool canAttack = true;
 
     [Header("Step Climbing Settings")]
@@ -163,8 +163,8 @@ public class MonsterController : MonoBehaviour
         //Destroy(gameObject);
         if (shooterAgent != null)
         {
-            shooterAgent.AddReward(20f);
-            Debug.Log("怪物死亡+20分");
+            shooterAgent.AddReward(30f);
+            Debug.Log("怪物死亡+30分");
         }
         StartCoroutine(DestroyAfterDeath());
 

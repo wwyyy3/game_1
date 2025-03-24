@@ -1,0 +1,56 @@
+{
+    "shootingAgent": {
+        "checkpoints": [
+            {
+                "steps": 99968,
+                "file_path": "results\\a0323PathFinding_8\\shootingAgent\\shootingAgent-99968.onnx",
+                "reward": null,
+                "creation_time": 1742770985.2508945,
+                "auxillary_file_paths": [
+                    "results\\a0323PathFinding_8\\shootingAgent\\shootingAgent-99968.pt"
+                ]
+            },
+            {
+                "steps": 199936,
+                "file_path": "results\\a0323PathFinding_8\\shootingAgent\\shootingAgent-199936.onnx",
+                "reward": null,
+                "creation_time": 1742771113.3143895,
+                "auxillary_file_paths": [
+                    "results\\a0323PathFinding_8\\shootingAgent\\shootingAgent-199936.pt"
+                ]
+            },
+            {
+                "steps": 299946,
+                "file_path": "results\\a0323PathFinding_8\\shootingAgent\\shootingAgent-299946.onnx",
+                "reward": 22.86025603422347,
+                "creation_time": 1742771246.0961404,
+                "auxillary_file_paths": [
+                    "results\\a0323PathFinding_8\\shootingAgent\\shootingAgent-299946.pt"
+                ]
+            },
+            {
+                "steps": 399956,
+                "file_path": "results\\a0323PathFinding_8\\shootingAgent\\shootingAgent-399956.onnx",
+                "reward": 72.4476909790188,
+                "creation_time": 1742771388.953901,
+                "auxillary_file_paths": [
+                    "results\\a0323PathFinding_8\\shootingAgent\\shootingAgent-399956.pt"
+                ]
+            },
+            {
+                "steps": 499995,
+                "file_path": "results\\a0323PathFinding_8\\shootingAgent\\shootingAgent-499995.onnx",
+                "reward": 23.125052321702242,
+                "creation_time": 1742771527.863151,
+                "auxillary_file_paths": [
+                    "results\\a0323PathFinding_8\\shootingAgent\\shootingAgent-499995.pt"
+                ]
+            }
+        ]
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.1.0",
+        "torch_version": "2.2.2+cu121"
+    }
+}

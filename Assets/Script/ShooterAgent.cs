@@ -37,6 +37,8 @@ public class ShooterAgent : Agent
     private Vector3 previousPosition;
     private float timer;
     private float comparisonTime = 1f;
+    private Dictionary<MonsterController, float> shotTimes = new Dictionary<MonsterController, float>();
+    private float previousXRotation;
     #endregion
 
     #region Initialization
@@ -55,15 +57,8 @@ public class ShooterAgent : Agent
         previousDistanceToGoal = Vector3.Distance(transform.localPosition, goal.transform.localPosition);
         previousPosition = transform.localPosition;
         SpawnObjects();
-        //StartCoroutine(DelayedSpawn());
         distanceDiffOfPrevious = 0f;
-        Debug.Log("episodeBegin");
-    }
-
-    private IEnumerator DelayedSpawn()
-    {
-        yield return new WaitForEndOfFrame();  
-        SpawnObjects();                       
+        previousXRotation = cameraLook.transform.eulerAngles.x;
     }
 
     #endregion
@@ -85,7 +80,7 @@ public class ShooterAgent : Agent
         HandleShooting(actions);
         ApplyBehaviorPenalty();
         CheckBoundary();
-        //Check();
+        ApplyRotationReward();
     }
 
     private void HandleMovement(ActionBuffers actions)
@@ -99,50 +94,88 @@ public class ShooterAgent : Agent
 
     private void HandleRotation(ActionBuffers actions)
     {
+        float MouseX = Mathf.Clamp(actions.ContinuousActions[2], -5f, 5f);
+        float MouseY = Mathf.Clamp(actions.ContinuousActions[3], -1f, 1f);
         Vector2 lookInput = new Vector2(
-            actions.ContinuousActions[2],
-            actions.ContinuousActions[3]
+            //actions.ContinuousActions[2],
+            //actions.ContinuousActions[3]
+            MouseX,
+            MouseY
         );
         cameraLook.pendingLookInput = lookInput;
     }
 
     private void HandleShooting(ActionBuffers actions)
     {
+
         Debug.DrawRay(shootingPoint.position, -shootingPoint.up * 100f, Color.green, 1f);
         if (!pathfindingOnlyPhase && actions.DiscreteActions[0] == 1)
         {
-            var wallMask = 1 << LayerMask.NameToLayer("Wall");
-            if (Physics.Raycast(shootingPoint.position, -shootingPoint.up, out RaycastHit detection, 100f, wallMask))
-            {
-                AddReward(-0.005f);
-                return;
-            }
+            //character.AgentFire();
+            //var wallMask = 1 << LayerMask.NameToLayer("Wall");
+            //if (Physics.Raycast(shootingPoint.position, -shootingPoint.up, out RaycastHit detection, 100f, wallMask))
+            //{
+            //    AddReward(-0.005f);
+            //    return;
+            //}
 
-            var enemyMask = 1 << LayerMask.NameToLayer("Enemy");
-            if (Physics.Raycast(shootingPoint.position, -shootingPoint.up, out RaycastHit hit, 100f, enemyMask))
+            var enemyMask = 1 << LayerMask.NameToLayer("Enemy") | (1 << LayerMask.NameToLayer("Wall"));
+            if (Physics.Raycast(shootingPoint.position, -shootingPoint.up, out RaycastHit enemyHit, 100f, 1 << LayerMask.NameToLayer("Enemy")))
             {
-                var monster = hit.collider.GetComponent<MonsterController>();
-                if (monster != null)
+                if (Physics.Raycast(shootingPoint.position, -shootingPoint.up, out RaycastHit wallHit, 100f, 1 << LayerMask.NameToLayer("Wall")))
                 {
-                    character.AgentFire();
-                    AddReward(1f);
-                    Debug.Log("对怪物开枪了，他死了没有 "+monster.IsDead);
-                    ////if (monster.IsDead && monster.hitCount >= monster.maxHits)
-                    //if (monster.IsDead)
-                    //{
+                    if (wallHit.distance >= enemyHit.distance)
+                    {
+                        var monster = enemyHit.collider.GetComponent<MonsterController>();
+                        if (monster != null)
+                        {
+                            character.AgentFire();
+                            AddReward(1f);
 
-                    //    AddReward(20f);
-                    //    Debug.Log("我杀了怪物");
-                    //}
-                }                   
-            }
-            else
-            {
-                AddReward(-0.005f);
+                            if (!shotTimes.ContainsKey(monster))
+                            {
+                                shotTimes.Add(monster, Time.time);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        AddReward(-0.005f);
+                    }
+                }
             }
         }
     }
+            //if (Physics.Raycast(shootingPoint.position, -shootingPoint.up, out RaycastHit hit, 100f, enemyMask))
+            //{
+            //    var monster = hit.collider.GetComponent<MonsterController>();
+            //    if (monster != null)
+            //    {
+            //        character.AgentFire();
+            //        AddReward(1f);
+            //        // 如果还没有记录过该怪物的开枪时间，则记录当前时间
+            //        if (!shotTimes.ContainsKey(monster))
+            //        {
+            //            shotTimes.Add(monster, Time.time);
+            //        }
+            //        //Debug.Log("对怪物开枪了，记录时间：" + Time.time + "，怪物死亡状态：" + monster.IsDead);
 
+            //        ////if (monster.IsDead && monster.hitCount >= monster.maxHits)
+            //        //if (monster.IsDead)
+            //        //{
+
+            //        //    AddReward(20f);
+            //        //    Debug.Log("我杀了怪物");
+            //        //}
+            //    }                   
+            //}
+            //else
+            //{
+            //    AddReward(-0.005f);
+            //}
+            //}
+
+        
     private void ApplyBehaviorPenalty()
     {       
         float currentDistanceToGoal = Vector3.Distance(transform.localPosition, goal.transform.localPosition);
@@ -185,11 +218,11 @@ public class ShooterAgent : Agent
         if (Physics.CheckSphere(transform.localPosition, 0.1f, wallLayer))
         {
             AddReward(-0.3f);
-            Debug.Log("Collided with wall");
+            //Debug.Log("Collided with wall");
         }
         if (transform.localPosition.y < -13.5f)
         {
-            Debug.Log("fall down");
+            //Debug.Log("fall down");
             AddReward(-5f);
             EndEpisode();
         }
@@ -215,7 +248,7 @@ public class ShooterAgent : Agent
     public void TakeDamage(int damage)
     {
         currentHealth -= damage;
-        AddReward(-5f);
+        AddReward(-1f);
 
         if (currentHealth <= 0)
         {
@@ -245,7 +278,7 @@ public class ShooterAgent : Agent
     #region Goal System
     private void GoalReached()
     {
-        AddReward(100f);
+        AddReward(50f);
         EndEpisode();
     }
 
@@ -283,16 +316,70 @@ public class ShooterAgent : Agent
 
     #endregion
 
-    private void Check() 
+    private void Update()
     {
-        if (pathfindingOnlyPhase)
+        CheckMonsterDeathReward();
+    }
+
+    private void CheckMonsterDeathReward()
+    {
+        List<MonsterController> monstersToRemove = new List<MonsterController>();
+        foreach (var entry in shotTimes)
         {
-            if (GetCumulativeReward() < -50f)
+            MonsterController monster = entry.Key;
+            float shotTime = entry.Value;
+            if (monster != null && monster.IsDead)
             {
-                Debug.Log("cumulative reward < -50 end episode。");
-                EndEpisode();
+                float timeDiff = Time.time - shotTime;
+                float bonusReward = timeDiff * 100f;
+                if (bonusReward > 5)
+                { 
+                    bonusReward = 5; 
+                }
+                AddReward(bonusReward);
+                monstersToRemove.Add(monster);
+                //Debug.Log("怪物死亡，耗时 " + timeDiff + " 秒，奖励增加：" + bonusReward);
             }
         }
+        foreach (var m in monstersToRemove)
+        {
+            shotTimes.Remove(m);
+        }
+    }
+
+    private void ApplyRotationReward()
+    {
+        float currentXRotation = cameraLook.transform.eulerAngles.x;
+        float rotationDiff = Mathf.Abs(Mathf.DeltaAngle(previousXRotation, currentXRotation));
+
+        if (rotationDiff > 1f) 
+        {
+            AddReward(rotationDiff * 0.0001f);
+            Debug.Log("我轻微旋转 " + rotationDiff + "度");
+            var enemyMask = 1 << LayerMask.NameToLayer("Enemy") | (1 << LayerMask.NameToLayer("Wall"));
+            if (Physics.Raycast(shootingPoint.position, -shootingPoint.up, out RaycastHit enemyHit, 100f, 1 << LayerMask.NameToLayer("Enemy")))
+            {
+                if (Physics.Raycast(shootingPoint.position, -shootingPoint.up, out RaycastHit wallHit, 100f, 1 << LayerMask.NameToLayer("Wall")))
+                {
+                    if (wallHit.distance >= enemyHit.distance)
+                    {
+                        if (Physics.Raycast(shootingPoint.position, -shootingPoint.up, out RaycastHit hit, 100f, enemyMask))
+                        {
+                            AddReward(0.1f);
+                            Debug.Log("我旋转了 " + rotationDiff + "度， 并指向敌人");
+                        }
+                        previousXRotation = currentXRotation;
+                    }                    
+                }
+            }
+            //var enemyMask = 1 << LayerMask.NameToLayer("Enemy") | (1 << LayerMask.NameToLayer("Wall")); 
+            //if (Physics.Raycast(shootingPoint.position, -shootingPoint.up, out RaycastHit hit, 100f, enemyMask)) 
+            //{
+            //    AddReward( 0.1f);
+            //    Debug.Log("我旋转了 " + rotationDiff + "度， 并指向敌人");
+            //}
+            //previousXRotation = currentXRotation;
+        }      
     }
 
 

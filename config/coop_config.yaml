@@ -27,7 +27,20 @@ behaviors:
       #   gamma: 0.99
       #   encoding_size: 256
     keep_checkpoints: 5
+    #rotation Part
+    # checkpoint_interval: 2000000
+    # max_steps: 8000000
+    # time_horizon: 64
+    # summary_freq: 1000
+
+    #final Part
     checkpoint_interval: 2000000
-    max_steps: 8000000
+    max_steps: 10000000
     time_horizon: 64
-    summary_freq: 20000
+    summary_freq: 8000
+
+    #pathFinding Part
+    # checkpoint_interval: 200000
+    # max_steps: 8000000
+    # time_horizon: 64
+    # summary_freq: 10000

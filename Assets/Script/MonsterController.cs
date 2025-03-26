@@ -21,8 +21,8 @@ public class MonsterController : MonoBehaviour
     public Animator animator;
 
     [Header("Monster Movement")]
-    private float walkingSpeed = 2f;
-    private float runningSpeed = 7f;
+    private float walkingSpeed = 5f;
+    private float runningSpeed = 10f;
 
     [Header("Attack Settings")]
     private float attackRange = 1.5f;

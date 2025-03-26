@@ -7,9 +7,8 @@ public class GameManager : MonoBehaviour
 {
 
     [SerializeField] private GameObject monsterPrefab;
-    [SerializeField] private int monsterCount = 5;
-    [SerializeField] private float spawnRadius = 100f;
-
+    private int monsterCount = 5;
+    private float spawnRadius = 66f;
 
     // Stores the monster instances in the current scene
     private List<GameObject> spawnedMonsters = new List<GameObject>();

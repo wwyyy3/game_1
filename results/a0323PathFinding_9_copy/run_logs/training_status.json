@@ -1,0 +1,65 @@
+{
+    "shootingAgent": {
+        "checkpoints": [
+            {
+                "steps": 2515364,
+                "file_path": "results\\a0323PathFinding_9\\shootingAgent\\shootingAgent-2515364.onnx",
+                "reward": 94.65310651605779,
+                "creation_time": 1742775146.7152398,
+                "auxillary_file_paths": [
+                    "results\\a0323PathFinding_9\\shootingAgent\\shootingAgent-2515364.pt"
+                ]
+            },
+            {
+                "steps": 3999987,
+                "file_path": "results\\a0323PathFinding_9_copy\\shootingAgent\\shootingAgent-3999987.onnx",
+                "reward": 181.27013305055374,
+                "creation_time": 1742964396.8233123,
+                "auxillary_file_paths": [
+                    "results\\a0323PathFinding_9_copy\\shootingAgent\\shootingAgent-3999987.pt"
+                ]
+            },
+            {
+                "steps": 5601157,
+                "file_path": "results\\a0323PathFinding_9_copy\\shootingAgent\\shootingAgent-5601157.onnx",
+                "reward": 1105.9366782009602,
+                "creation_time": 1742967170.1509926,
+                "auxillary_file_paths": [
+                    "results\\a0323PathFinding_9_copy\\shootingAgent\\shootingAgent-5601157.pt"
+                ]
+            },
+            {
+                "steps": 5999989,
+                "file_path": "results\\a0323PathFinding_9_copy\\shootingAgent\\shootingAgent-5999989.onnx",
+                "reward": 3895.961639939911,
+                "creation_time": 1742968049.8883593,
+                "auxillary_file_paths": [
+                    "results\\a0323PathFinding_9_copy\\shootingAgent\\shootingAgent-5999989.pt"
+                ]
+            },
+            {
+                "steps": 6284455,
+                "file_path": "results\\a0323PathFinding_9_copy\\shootingAgent\\shootingAgent-6284455.onnx",
+                "reward": 3574.68452163718,
+                "creation_time": 1742968576.304617,
+                "auxillary_file_paths": [
+                    "results\\a0323PathFinding_9_copy\\shootingAgent\\shootingAgent-6284455.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 6284455,
+            "file_path": "results\\a0323PathFinding_9_copy\\shootingAgent.onnx",
+            "reward": 3574.68452163718,
+            "creation_time": 1742968576.304617,
+            "auxillary_file_paths": [
+                "results\\a0323PathFinding_9_copy\\shootingAgent\\shootingAgent-6284455.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.1.0",
+        "torch_version": "2.2.2+cu121"
+    }
+}

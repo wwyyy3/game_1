@@ -1,0 +1,56 @@
+{
+    "shootingAgent": {
+        "checkpoints": [
+            {
+                "steps": 3732325,
+                "file_path": "results\\a0325Shooting_9.12\\shootingAgent\\shootingAgent-3732325.onnx",
+                "reward": -10.505396716296673,
+                "creation_time": 1742890304.5331893,
+                "auxillary_file_paths": [
+                    "results\\a0325Shooting_9.12\\shootingAgent\\shootingAgent-3732325.pt"
+                ]
+            },
+            {
+                "steps": 3999993,
+                "file_path": "results\\a0325Shooting_9.12\\shootingAgent\\shootingAgent-3999993.onnx",
+                "reward": null,
+                "creation_time": 1742891048.3743145,
+                "auxillary_file_paths": [
+                    "results\\a0325Shooting_9.12\\shootingAgent\\shootingAgent-3999993.pt"
+                ]
+            },
+            {
+                "steps": 7999993,
+                "file_path": "results\\a0325Shooting_9.12\\shootingAgent\\shootingAgent-7999993.onnx",
+                "reward": null,
+                "creation_time": 1742897775.205006,
+                "auxillary_file_paths": [
+                    "results\\a0325Shooting_9.12\\shootingAgent\\shootingAgent-7999993.pt"
+                ]
+            },
+            {
+                "steps": 9471779,
+                "file_path": "results\\a0325Shooting_9.12\\shootingAgent\\shootingAgent-9471779.onnx",
+                "reward": 72.63155442352097,
+                "creation_time": 1742900111.152182,
+                "auxillary_file_paths": [
+                    "results\\a0325Shooting_9.12\\shootingAgent\\shootingAgent-9471779.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 9471779,
+            "file_path": "results\\a0325Shooting_9.12\\shootingAgent.onnx",
+            "reward": 72.63155442352097,
+            "creation_time": 1742900111.152182,
+            "auxillary_file_paths": [
+                "results\\a0325Shooting_9.12\\shootingAgent\\shootingAgent-9471779.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.1.0",
+        "torch_version": "2.2.2+cu121"
+    }
+}

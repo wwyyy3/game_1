@@ -14,7 +14,7 @@ behaviors:
       learning_rate_schedule: linear
       beta_schedule: linear
       epsilon_schedule: linear
-    checkpoint_interval: 2000000
+    checkpoint_interval: 200000
     network_settings:
       normalize: false
       hidden_units: 256
@@ -42,7 +42,7 @@ behaviors:
     even_checkpoints: false
     max_steps: 8000000
     time_horizon: 64
-    summary_freq: 20000
+    summary_freq: 10000
     threaded: false
     self_play: null
     behavioral_cloning: null
@@ -74,7 +74,7 @@ checkpoint_settings:
   resume: true
   force: false
   train_model: false
-  inference: false
+  inference: true
   results_dir: results
 torch_settings:
   device: null

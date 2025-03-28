@@ -134,7 +134,7 @@ public class ShooterAgent : Agent
                         if (monster != null)
                         {
                             character.AgentFire();
-                            AddReward(1f);
+                            AddReward(0.5f);
 
                             if (!shotTimes.ContainsKey(monster))
                             {
@@ -153,7 +153,7 @@ public class ShooterAgent : Agent
                     if (monster != null)
                     {
                         character.AgentFire();
-                        AddReward(1f);
+                        AddReward(0.5f);
 
                         if (!shotTimes.ContainsKey(monster))
                         {
@@ -171,8 +171,9 @@ public class ShooterAgent : Agent
         {
             float currentDistanceToGoal = Vector3.Distance(transform.localPosition, goal.transform.localPosition);
             float distanceDiffOfGoal = previousDistanceToGoal - currentDistanceToGoal;
+            Debug.Log("distanceDiffOfGoal" + distanceDiffOfGoal);
 
-            AddReward(distanceDiffOfGoal * 0.1f);
+            AddReward(distanceDiffOfGoal * 0.2f);
             previousDistanceToGoal = currentDistanceToGoal;
 
             distanceDiffOfPrevious = Vector3.Distance(transform.localPosition, previousPosition);
@@ -181,14 +182,10 @@ public class ShooterAgent : Agent
             {
                 previousPosition = transform.localPosition;
 
-                if (distanceDiffOfPrevious > 1)
+                if (distanceDiffOfPrevious > 3)
                 {
-                    AddReward(distanceDiffOfPrevious * 0.25f);
+                    AddReward(distanceDiffOfPrevious * 0.05f);
 
-                }
-                else if (distanceDiffOfPrevious > 3)
-                {
-                    AddReward(distanceDiffOfPrevious * 0.5f);
                 }
                 else
                 {
@@ -219,7 +216,8 @@ public class ShooterAgent : Agent
         }
         if (transform.localPosition.y < -13.5f)
         {
-            AddReward(-5f);
+            //AddReward(-5f);²âÊÔ
+            AddReward(-2f);
             EndEpisode();
         }
 
@@ -244,7 +242,8 @@ public class ShooterAgent : Agent
     public void TakeDamage(int damage)
     {
         currentHealth -= damage;
-        AddReward(-5f);
+        AddReward(-1f);
+        //AddReward(-5f);²âÊÔ
 
         if (currentHealth <= 0)
         {
@@ -286,7 +285,7 @@ public class ShooterAgent : Agent
 
         } else
         {
-            AddReward(50f);
+            AddReward(15f);
             Debug.Log("End");
             EndEpisode();
         }
@@ -304,17 +303,17 @@ public class ShooterAgent : Agent
 
     private void CountEnemy()
     {
-        if (!pathfindingOnlyPhase)
+            if (!pathfindingOnlyPhase)
         {
             if (gameManager != null && gameManager.GetAliveMonsterCount() == 0)
             {
                 if (shootingOnlyPhase) 
                 {                   
-                    AddReward(30f);
+                    AddReward(2f);
                     Debug.Log("Five Killed£¬ MVP");
                     GoalReached();
                 }
-                AddReward(5f);
+                AddReward(2f);
                 Debug.Log("Five Killed£¬ MVP");
             }
         }
@@ -324,11 +323,11 @@ public class ShooterAgent : Agent
     {
         if (collision.gameObject.CompareTag("Wall"))
         {
-            AddReward(-0.05f);
+            AddReward(-0.005f);
         }
         if (collision.gameObject.CompareTag("Building"))
         {
-            AddReward(-0.05f);
+            AddReward(-0.005f);
         }
     }
 
@@ -336,11 +335,11 @@ public class ShooterAgent : Agent
     {
         if (collision.gameObject.CompareTag("Wall"))
         {
-            AddReward(-0.01f * Time.fixedDeltaTime);
+            AddReward(-0.001f * Time.fixedDeltaTime);
         }
         if (collision.gameObject.CompareTag("Building"))
         {
-            AddReward(-0.01f * Time.fixedDeltaTime);
+            AddReward(-0.001f * Time.fixedDeltaTime);
         }
     }
 
@@ -361,11 +360,7 @@ public class ShooterAgent : Agent
             if (monster != null && monster.IsDead)
             {
                 float timeDiff = Time.time - shotTime;
-                float bonusReward = timeDiff * 100f;
-                if (bonusReward > 5)
-                { 
-                    bonusReward = 5; 
-                }
+                float bonusReward = timeDiff * 0.1f;               
                 AddReward(bonusReward);
                 monstersToRemove.Add(monster);
             }

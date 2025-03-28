@@ -10674,7 +10674,7 @@ PrefabInstance:
     - target: {fileID: 1060594985761518732, guid: 19eadcf8fbed56b4da77ca94c1b4145f,
         type: 3}
       propertyPath: pathfindingOnlyPhase
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2610493085651796746, guid: 19eadcf8fbed56b4da77ca94c1b4145f,
         type: 3}
